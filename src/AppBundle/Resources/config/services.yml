@@ -18,3 +18,6 @@ services:
         resource: '../../Controller'
         public: true
         tags: ['controller.service_arguments']
+
+    AppBundle\Serializer\:
+        resource: '../../Serializer'
