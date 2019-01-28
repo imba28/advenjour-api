@@ -31,5 +31,9 @@ class AppKernel extends Kernel
         if (class_exists('\Pimcore\Bundle\LegacyBundle\PimcoreLegacyBundle')) {
             $collection->addBundle(new \Pimcore\Bundle\LegacyBundle\PimcoreLegacyBundle);
         }
+
+        if (class_exists('\Nelmio\ApiDocBundle\NelmioApiDocBundle')) {
+            $collection->addBundle(new Nelmio\ApiDocBundle\NelmioApiDocBundle());
+        }
     }
 }

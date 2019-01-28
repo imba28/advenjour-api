@@ -4,6 +4,26 @@ imports:
     - { resource: services.yml }
     - { resource: 'local/' }
 
+nelmio_api_doc:
+    areas:
+        path_patterns: # an array of regexps
+            - ^/api(?!/doc$)
+    documentation:
+        host: advenjour.ddns.net
+        schemes: [http, https]
+        info:
+            title: Advenjour API Doc
+            description: bisl grün, bisl blau
+            version: 1.0.0
+        securityDefinitions:
+            Bearer:
+                type: apiKey
+                description: 'Value: Bearer {jwt}'
+                name: Authorization
+                in: header
+        security:
+                - Bearer: []
+
 pimcore:
 
 #### TRANSLATIONS
@@ -65,6 +85,9 @@ pimcore:
 
 #### SYMFONY OVERRIDES
 framework:
+    templating:
+        engines: ['twig']
+
 
 #### USE SESSION HANDLER CONFIGURED IN php.ini
 #    session:
