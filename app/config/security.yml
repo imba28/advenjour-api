@@ -1,3 +1,16 @@
 # To get started with security, check out the documentation:
 # http://symfony.com/doc/current/security.html
 security:
+  providers:
+    pimcore_user_provider:
+      id: app.security.user_provider
+
+  firewalls:
+    api:
+      anonymous: ~
+      provider: pimcore_user_provider
+      json_login:
+        check_path: app_auth_login
+  access_control:
+    # - { path: /api/v1/auth, roles: IS_ANONYMOUS }
+    # - { path: /api/v1/events, roles: ROLE_USER }

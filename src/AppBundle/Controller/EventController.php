@@ -2,7 +2,6 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Serializer\EventSerializer;
-use Nelmio\ApiDocBundle\Annotation\Security;
 use Pimcore\Model\DataObject\Event;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -35,7 +34,11 @@ class EventController extends ApiController
      *     description="Sort results ascending or descending order. Possible values are DESC and ASC"
      * )
      * @SWG\Tag(name="Events")
-     * @Security(name="Bearer")
+     * @SWG\Response(response=200, description="List of requested objects")
+     *
+     * @param Request $request
+     * @return \Symfony\Component\HttpFoundation\JsonResponse
+     * @throws \Exception
      */
     public function listAction(Request $request)
     {
@@ -51,6 +54,8 @@ class EventController extends ApiController
     }
 
     /**
+     * Event single resource objects.
+     *
      * @Route("/events/{id}.json", methods={"GET"})
      *
      * @SWG\Parameter(
@@ -60,6 +65,7 @@ class EventController extends ApiController
      *     description="The unqiue id of an existing event object."
      * )
      * @SWG\Tag(name="Events")
+     * @SWG\Response(response=200, description="The requested objects")
      *
      * @param Request $request
      * @return \Symfony\Component\HttpFoundation\JsonResponse
