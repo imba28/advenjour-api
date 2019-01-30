@@ -16,7 +16,7 @@ class ErrorObject implements \JsonSerializable
     public function jsonSerialize()
     {
         $status = $this->exception instanceof HttpExceptionInterface ? $this->exception->getStatusCode() : Response::HTTP_INTERNAL_SERVER_ERROR;
-        $title = $this->exception->getMessage();
+        $title = \Pimcore::inDebugMode() ? $this->exception->getMessage() : 'An error occurred.';
 
         return [
             'status' => $status,

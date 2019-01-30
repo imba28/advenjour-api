@@ -22,6 +22,7 @@ include __DIR__ . "/../vendor/autoload.php";
 \Pimcore\Bootstrap::boostrap();
 
 $request = Request::createFromGlobals();
+Request::setTrustedProxies(['127.0.0.1', '::1'], Request::HEADER_X_FORWARDED_ALL);
 
 // set current request as property on tool as there's no
 // request stack available yet
