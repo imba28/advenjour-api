@@ -1,6 +1,8 @@
 <?php
 namespace AppBundle\EventListener;
 
+use AppBundle\JsonAPI\Document;
+use AppBundle\JsonAPI\ErrorObject;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\GetResponseForExceptionEvent;
@@ -17,13 +19,12 @@ class KernelExceptionListener
     {
         $exception = $event->getException();
 
-        $response = new JsonResponse([
-            'error' => $exception->getMessage()
-        ]);
+        $document = new Document();
+        $document->addError(new ErrorObject($exception));
+        $response = new JsonResponse($document);
 
         if ($exception instanceof HttpExceptionInterface) {
             $response->setStatusCode($exception->getStatusCode());
-            $response->headers->replace($exception->getHeaders());
         } else {
             $response->setStatusCode(Response::HTTP_INTERNAL_SERVER_ERROR);
         }

@@ -1,49 +1,64 @@
 <?php
 namespace AppBundle\Serializer;
 
+use AppBundle\JsonAPI\ResourceIdentifier;
+use AppBundle\JsonAPI\SingleResource;
+use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject\Event;
 
-class EventSerializer implements SerializerInterface
+class EventSerializer extends AbstractSerializer
 {
     /**
-     * Serialize event object. Extracts all properties that should be accessible via the api.
-     *
-     * @param Event $event
-     * @return array
+     * @param $object
+     * @return ResourceIdentifier
+     * @throws \Exception
      */
-    public function serialize($event): ?array
+    public function serializeResourceIdentifier($object): ResourceIdentifier
     {
-        return [
-            'name' => $event->getName(),
-            'description' => $event->getDescription(),
-            'price' => $event->getPrice() ? [
-                'value' => $event->getPrice()->getValue(),
-                'unit' => $event->getPrice()->getUnit()->getAbbreviation(),
-            ] : null,
-            'date' => [
-                'from' => $event->getFrom(),
-                'to' => $event->getTo()
-            ],
-            'locations' => []
-        ];
+        if (!$object instanceof Event) {
+            $this->throwInvalidTypeException($object, Event::class);
+        }
+
+        return $this->getResourceIdentifier($object->getId(), $object->getClassName());
     }
 
     /**
-     * Serialize list of event objects.
+     * Serialize event object. Extracts all properties that should be accessible via the api.
      *
-     * @param array $list
-     * @return array
+     * @param Event $object
+     * @return SingleResource|array
+     * @throws \Exception
      */
-    public function serializeArray(array $list): array
+    public function serializeResource($object): ResourceIdentifier
     {
-        $json = [];
+        if (!$object instanceof Event) {
+            $this->throwInvalidTypeException($object, Event::class);
+        }
 
-        foreach ($list as $event) {
-            if ($event instanceof Event) {
-                $json[] = $this->serialize($event);
+        $resource = $this->getSingleResource($object->getId(), $object->getClassName());
+        $resource->setAttributes([
+            'name' => $object->getName(),
+            'description' => $object->getDescription(),
+            'price' => $object->getPrice() ? [
+                'value' => $object->getPrice()->getValue(),
+                'unit' => $object->getPrice()->getUnit()->getAbbreviation(),
+            ] : null,
+            'date' => [
+                'from' => $object->getFrom(),
+                'to' => $object->getTo()
+            ]
+        ]);
+
+        if (count($object->getImages()->getItems()) > 0) {
+            $resource->setRelationships([
+                'images' => $this->getSerializer(Asset::class)->serializeResourceIdentifierArray($object->getImages()->getItems()),
+            ]);
+
+            if ($this->includeFullResource('images')) {
+                $resource->setIncludes($this->getSerializer(Asset::class)->serializeResourceArray($object->getImages()->getItems()));
             }
         }
 
-        return $json;
+        return $resource;
     }
 }

@@ -1,7 +1,7 @@
 <?php
 namespace AppBundle\Controller;
 
-use AppBundle\Serializer\EventSerializer;
+use AppBundle\Serializer\SerializerFactory;
 use Pimcore\Model\DataObject\Event;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -10,11 +10,11 @@ use Swagger\Annotations as SWG;
 
 class EventController extends ApiController
 {
-    private $serializer;
+    private $factory;
 
-    public function __construct(EventSerializer $serializer)
+    public function __construct(SerializerFactory $factory)
     {
-        $this->serializer = $serializer;
+        $this->factory = $factory;
     }
 
     /**
@@ -51,7 +51,7 @@ class EventController extends ApiController
             $list->setOrder($order);
         }
 
-        return $this->json($this->serializer->serializeArray($list->load()));
+        return $this->success($this->factory->build(Event::class)->serializeResourceArray($list->load()));
     }
 
     /**
@@ -70,11 +70,12 @@ class EventController extends ApiController
      *
      * @param Request $request
      * @return \Symfony\Component\HttpFoundation\JsonResponse
+     * @throws \Exception
      */
     public function detailAction(Request $request)
     {
         if ($event = Event::getById($request->get('id'))) {
-            return $this->json($this->serializer->serialize($event));
+            return $this->success($this->factory->build(Event::class)->serializeResource($event));
         }
 
         throw new NotFoundHttpException('Item not found!');

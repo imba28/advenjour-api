@@ -1,11 +1,13 @@
 <?php
 namespace AppBundle\Serializer;
 
+use AppBundle\JsonAPI\ResourceIdentifier;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Asset\Image;
+use Pimcore\Model\DataObject\Data\Hotspotimage;
 use Pimcore\Tool;
 
-class AssetSerializer implements SerializerInterface
+class AssetSerializer extends AbstractSerializer
 {
     private $thumbnails = [];
 
@@ -13,15 +15,46 @@ class AssetSerializer implements SerializerInterface
         $this->thumbnails = $array;
     }
 
-    public function serialize($object): ?array
+    public function serializeResourceIdentifier($object): ResourceIdentifier
+    {
+        if (!$object instanceof Asset) {
+            $this->throwInvalidTypeException($object, Asset::class);
+        }
+
+        return $this->getResourceIdentifier($object->getId(), ucfirst($object->getType()));
+    }
+
+    public function serializeResourceIdentifierArray(array $array): array
+    {
+        $images = [];
+
+        foreach ($array as $item) {
+            if ($item instanceof Asset) {
+                $images[] = $item;
+            } else if ($item instanceof Hotspotimage) {
+                $images[] = $item->getImage();
+            }
+        }
+
+        return parent::serializeResourceIdentifierArray($images);
+    }
+
+    public function serializeResource($object): ResourceIdentifier
     {
         if ($object === null) {
             return null;
         }
 
         if (!$object instanceof Asset) {
-            throw new \Exception('$object must be of type ' . Asset::class . ' but was ' . is_object($object) ? get_class($object) : gettype($object));
+            $this->throwInvalidTypeException($object, Asset::class);
         }
+
+        $resource = $this->getSingleResource($object->getId(), $object->getType());
+        $resource->setAttributes([
+            'fullPath' => Tool::getHostUrl() . $object->getFullPath(),
+            'title' => $object->getMetadata('title'),
+            'description' => $object->getMetadata('description'),
+        ]);
 
         if ($object instanceof Image) {
             $thumbnails = array_map(
@@ -30,29 +63,25 @@ class AssetSerializer implements SerializerInterface
                 },
                 $this->thumbnails
             );
-        } else {
-            $thumbnails = null;
+
+            $resource->addAttribute('thumbnails', $thumbnails);
         }
 
-        return [
-            'id' => $object->getId(),
-            'fullPath' => Tool::getHostUrl() . $object->getFullPath(),
-            'title' => $object->getMetadata('title'),
-            'description' => $object->getMetadata('description'),
-            'thumbnails' => $thumbnails
-        ];
+        return $resource;
     }
 
-    public function serializeArray(array $array): array
+    public function serializeResourceArray(array $array): array
     {
-        $json = [];
+        $images = [];
 
         foreach ($array as $object) {
             if ($object instanceof Asset) {
-                $json[] = $this->serialize($object);
+                $images[] = $object;
+            } else if ($object instanceof Hotspotimage) {
+                $images[] = $object->getImage();
             }
         }
 
-        return $json;
+        return parent::serializeResourceArray($images);
     }
 }

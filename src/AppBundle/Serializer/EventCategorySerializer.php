@@ -1,55 +1,54 @@
 <?php
 namespace AppBundle\Serializer;
 
+use AppBundle\JsonAPI\ResourceIdentifier;
+use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject\EventCategory;
 
-class EventCategorySerializer implements SerializerInterface
+class EventCategorySerializer extends AbstractSerializer
 {
-    private $assetSerializer;
-
-    public function __construct(AssetSerializer $assetSerializer)
+    public function serializeResourceIdentifier($object): ResourceIdentifier
     {
-        $this->assetSerializer = $assetSerializer;
+        if (!$object instanceof EventCategory) {
+            $this->throwInvalidTypeException($object, EventCategory::class);
+        }
+
+        return $this->getResourceIdentifier($object->getId(), $object->getClassName());
     }
 
     /**
      * Serialize event category object. Extracts all properties that should be accessible via the api.
      *
-     * @param EventCategory $category
-     * @return array
+     * @param EventCategory $object
+     * @return ResourceIdentifier
      * @throws \Exception
      */
-    public function serialize($category): ?array
+    public function serializeResource($object): ResourceIdentifier
     {
-        $this->assetSerializer->setThumbnails([
+        if (!$object instanceof EventCategory) {
+            $this->throwInvalidTypeException($object, EventCategory::class);
+        }
+        $this->getSerializer(Asset::class)->setThumbnails([
             'eventCategoryOverview'
         ]);
 
-        return [
-            'id' => $category->getId(),
-            'name' => $category->getName(),
-            'image' => $this->assetSerializer->serialize($category->getImage()),
-            'parentCategory' => $category->getParentCategory() ? $category->getParentCategory()->getId() : null
-        ];
-    }
+        $singleResource = $this->getSingleResource($object->getId(), $object->getClassName());
+        $singleResource->setAttributes([
+            'name' => $object->getName(),
+        ]);
 
-    /**
-     * Serialize list of event objects.
-     *
-     * @param EventCategory[] $list
-     * @return array
-     * @throws \Exception
-     */
-    public function serializeArray(array $list): array
-    {
-        $json = [];
+        if ($object->getImage() !== null) {
+            $singleResource->setRelationships([
+                'image' => $this->getSerializer(Asset::class)->serializeResourceIdentifier($object->getImage())
+            ]);
 
-        foreach ($list as $event) {
-            if ($event instanceof EventCategory) {
-                $json[] = $this->serialize($event);
+            if ($this->includeFullResource('image')) {
+                $singleResource->setIncludes([
+                    $this->getSerializer(Asset::class)->serializeResource($object->getImage())
+                ]);
             }
         }
 
-        return $json;
+        return $singleResource;
     }
 }

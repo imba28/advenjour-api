@@ -5,10 +5,10 @@ use AppBundle\Model\DataObject\User;
 use AppBundle\Serializer\UserSerializer;
 use Respect\Validation\Exceptions\ValidationException;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Respect\Validation\Validator as v;
 use Swagger\Annotations as SWG;
-use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
 class AuthController extends ApiController
 {
@@ -20,7 +20,7 @@ class AuthController extends ApiController
     }
 
     /**
-     * @Route("/auth/login", name="app_auth_login", methods={"POST", "GET"})
+     * @Route("/auth/login", name="app_auth_login", methods={"POST"})
      * @return \Symfony\Component\HttpFoundation\Response
      *
      * @SWG\Parameter(
@@ -47,10 +47,8 @@ class AuthController extends ApiController
         $user = $this->getUser();
 
         if ($user && $this->isGranted('ROLE_USER')) {
-            return $this->success($this->serializer->serialize($user));
+            return $this->success($this->serializer->serializeResource($user));
         }
-
-        return $this->error('Invalid credentials');
     }
 
     /**
@@ -99,6 +97,7 @@ class AuthController extends ApiController
      *    )
      * )
      * @SWG\Response(response=201, description="User successfuly created")
+     * * @SWG\Response(response=422, description="Validation error. Check submitted json for errors.")
      * @return \Symfony\Component\HttpFoundation\JsonResponse
      */
     public function registerAction(Request $request)
@@ -122,7 +121,7 @@ class AuthController extends ApiController
 
             $user->save();
 
-            return $this->success($this->serializer->serialize($user));
+            return $this->success($this->serializer->serializeResource($user), Response::HTTP_CREATED);
         } catch (ValidationException $e) {
             $errors = array_filter(
                 $e->findMessages([
@@ -132,11 +131,11 @@ class AuthController extends ApiController
                 ])
             );
 
-            return $this->error($errors);
+            return $this->error($errors, Response::HTTP_UNPROCESSABLE_ENTITY);
         } catch (DuplicateUserException $e) {
-            return $this->error($e->getMessage());
+            return $this->error($e->getMessage(), Response::HTTP_UNPROCESSABLE_ENTITY);
         } catch (\Exception $e) {
-            return $this->error('Model validation failed.');
+            return $this->error('Model validation failed.', Response::HTTP_UNPROCESSABLE_ENTITY);
         }
     }
 }

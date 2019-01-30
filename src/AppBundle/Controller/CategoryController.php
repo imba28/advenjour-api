@@ -1,6 +1,7 @@
 <?php
 namespace AppBundle\Controller;
 
+use AppBundle\JsonAPI\Document;
 use AppBundle\Serializer\EventCategorySerializer;
 use Pimcore\Model\DataObject\EventCategory;
 use Symfony\Component\HttpFoundation\Request;
@@ -58,7 +59,7 @@ class CategoryController extends ApiController
             $list->setCondition('parentCategory__id IS NULL');
         }
 
-        return $this->json($this->serializer->serializeArray($list->load()));
+        return $this->success($this->serializer->serializeResourceArray($list->load()));
     }
 
     /**
@@ -82,7 +83,7 @@ class CategoryController extends ApiController
     public function detailAction(Request $request)
     {
         if ($category = EventCategory::getById($request->get('id'))) {
-            return $this->json($this->serializer->serialize($category));
+            return $this->success($this->serializer->serializeResource($category));
         }
 
         throw new NotFoundHttpException('Item not found!');

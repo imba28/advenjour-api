@@ -25,8 +25,11 @@ services:
 
     AppBundle\Serializer\:
         resource: '../../Serializer'
+        public: true
 
     app.security.user_provider:
         class: Pimcore\Security\User\ObjectUserProvider
         arguments: ['AppBundle\Model\DataObject\User', 'email']
 
+    app.security.authentication_error_handler:
+        class: AppBundle\EventListener\AuthenticationFailureHandler

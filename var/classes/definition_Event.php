@@ -1,7 +1,7 @@
 <?php 
 
 /** 
-* Generated at: 2019-01-30T09:44:03+01:00
+* Generated at: 2019-01-30T11:32:17+01:00
 * Inheritance: no
 * Variants: no
 * Changed by: admin (2)
@@ -15,6 +15,7 @@ Fields Summary:
 -- price [quantityValue]
 - from [datetime]
 - to [datetime]
+- images [imageGallery]
 - locations [advancedManyToManyRelation]
 - categories [manyToManyObjectRelation]
 */ 
@@ -25,7 +26,7 @@ return Pimcore\Model\DataObject\ClassDefinition::__set_state(array(
    'name' => 'Event',
    'description' => '',
    'creationDate' => 0,
-   'modificationDate' => 1548837843,
+   'modificationDate' => 1548844337,
    'userOwner' => 2,
    'userModification' => 2,
    'parentClass' => '',
@@ -276,6 +277,41 @@ return Pimcore\Model\DataObject\ClassDefinition::__set_state(array(
                  'locked' => false,
               )),
               2 => 
+              Pimcore\Model\DataObject\ClassDefinition\Data\ImageGallery::__set_state(array(
+                 'fieldtype' => 'imageGallery',
+                 'queryColumnType' => 
+                array (
+                  'images' => 'text',
+                  'hotspots' => 'text',
+                ),
+                 'columnType' => 
+                array (
+                  'images' => 'text',
+                  'hotspots' => 'text',
+                ),
+                 'phpdocType' => '\\Pimcore\\Model\\DataObject\\Data\\ImageGallery',
+                 'width' => NULL,
+                 'height' => NULL,
+                 'uploadPath' => '/events/gallery',
+                 'ratioX' => NULL,
+                 'ratioY' => NULL,
+                 'predefinedDataTemplates' => '',
+                 'name' => 'images',
+                 'title' => 'Bilder',
+                 'tooltip' => '',
+                 'mandatory' => false,
+                 'noteditable' => false,
+                 'index' => false,
+                 'locked' => NULL,
+                 'style' => '',
+                 'permissions' => NULL,
+                 'datatype' => 'data',
+                 'relationType' => false,
+                 'invisible' => false,
+                 'visibleGridView' => false,
+                 'visibleSearch' => false,
+              )),
+              3 => 
               Pimcore\Model\DataObject\ClassDefinition\Data\AdvancedManyToManyRelation::__set_state(array(
                  'columns' => 
                 array (
@@ -341,7 +377,7 @@ return Pimcore\Model\DataObject\ClassDefinition::__set_state(array(
                   1 => 'dateto',
                 ),
               )),
-              3 => 
+              4 => 
               Pimcore\Model\DataObject\ClassDefinition\Data\ManyToManyObjectRelation::__set_state(array(
                  'fieldtype' => 'manyToManyObjectRelation',
                  'width' => '',
@@ -366,7 +402,7 @@ return Pimcore\Model\DataObject\ClassDefinition::__set_state(array(
                  'mandatory' => false,
                  'noteditable' => false,
                  'index' => false,
-                 'locked' => NULL,
+                 'locked' => false,
                  'style' => '',
                  'permissions' => NULL,
                  'datatype' => 'data',

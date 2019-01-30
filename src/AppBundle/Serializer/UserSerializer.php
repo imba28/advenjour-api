@@ -2,41 +2,39 @@
 namespace AppBundle\Serializer;
 
 use Pimcore\Model\DataObject\User;
+use AppBundle\JsonAPI\ResourceIdentifier;
 
-class UserSerializer implements SerializerInterface
+class UserSerializer extends AbstractSerializer
 {
     /**
-     * Serialize event object. Extracts all properties that should be accessible via the api.
-     *
-     * @param User $user
-     * @return array
+     * @param $object
+     * @return ResourceIdentifier
+     * @throws \Exception
      */
-    public function serialize($user): ?array
+    public function serializeResourceIdentifier($object): ResourceIdentifier
     {
-        return [
-            'id' => $user->getId(),
-            'username' => $user->getUsername(),
-            'email' => $user->getEmail(),
-            'isHost' => $user->getIsHost() === true,
-        ];
+        if (!$object instanceof User) {
+            $this->throwInvalidTypeException($object, User::class);
+        }
+
+        return $this->getResourceIdentifier($object->getId(), $object->getClassName());
     }
 
     /**
-     * Serialize list of event objects.
+     * Serialize event object. Extracts all properties that should be accessible via the api.
      *
-     * @param User[] $list
+     * @param User $object
      * @return array
      */
-    public function serializeArray(array $list): array
+    public function serializeResource($object): ResourceIdentifier
     {
-        $json = [];
+        $resource = $this->getSingleResource($object->getId(), $object->getClassName());
+        $resource->setAttributes([
+            'username' => $object->getUsername(),
+            'email' => $object->getEmail(),
+            'isHost' => $object->getIsHost() === true,
+        ]);
 
-        foreach ($list as $user) {
-            if ($user instanceof User) {
-                $json[] = $this->serialize($user);
-            }
-        }
-
-        return $json;
+        return $resource;
     }
 }
