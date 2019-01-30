@@ -3,6 +3,7 @@ namespace AppBundle\Controller;
 
 use AppBundle\JsonAPI\Document;
 use AppBundle\JsonAPI\ErrorObject;
+use AppBundle\JsonAPI\ResourceIdentifier;
 use Pimcore\Controller\FrontendController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -26,7 +27,7 @@ class ApiController extends FrontendController
     }
 
     /**
-     * @param array $data
+     * @param array|ResourceIdentifier $data
      * @param int $httpStatus
      * @return \Symfony\Component\HttpFoundation\JsonResponse
      */
@@ -63,5 +64,16 @@ class ApiController extends FrontendController
     public function optionsCorsAcceptAction()
     {
         return new Response(null, 200);
+    }
+
+    /**
+     * Remove any non word, digit or underscore character from a string.
+     *
+     * @param string $string
+     * @return string
+     */
+    protected function escapePropertyString(string $string): string
+    {
+        return preg_replace('/[^\w\_\d]+/', '', $string);
     }
 }

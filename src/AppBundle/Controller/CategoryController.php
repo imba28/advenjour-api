@@ -54,10 +54,10 @@ class CategoryController extends ApiController
     {
         $list = new EventCategory\Listing();
         if ($orderBy = $request->get('orderBy')) {
-            $list->setOrderKey($orderBy);
+            $list->setOrderKey($this->escapePropertyString($orderBy));
         }
         if ($order = $request->get('order')) {
-            $list->setOrder($order);
+            $list->setOrder($this->escapePropertyString($order));
         }
 
         if ($parentCategory = $request->get('id')) {

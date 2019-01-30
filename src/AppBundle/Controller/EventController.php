@@ -19,8 +19,15 @@ use Respect\Validation\Validator as v;
  */
 class EventController extends ApiController
 {
+    /**
+     * @var SerializerFactory
+     */
     private $factory;
 
+    /**
+     * EventController constructor.
+     * @param SerializerFactory $factory
+     */
     public function __construct(SerializerFactory $factory)
     {
         $this->factory = $factory;
@@ -60,10 +67,10 @@ class EventController extends ApiController
     {
         $list = new Event\Listing();
         if ($orderBy = $request->get('orderBy')) {
-            $list->setOrderKey($orderBy);
+            $list->setOrderKey($this->escapePropertyString($orderBy));
         }
         if ($order = $request->get('order')) {
-            $list->setOrder($order);
+            $list->setOrder($this->escapePropertyString($order));
         }
 
         return $this->success($this->factory->build(Event::class)->serializeResourceArray($list->load()));
@@ -102,7 +109,6 @@ class EventController extends ApiController
 
         throw new NotFoundHttpException('Item not found!');
     }
-
 
     /**
      * Create an event object.
