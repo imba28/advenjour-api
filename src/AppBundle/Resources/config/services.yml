@@ -19,9 +19,14 @@ services:
         tags:
             - { name: kernel.event_listener, event: kernel.response }
 
+    AppBundle\EventListener\KernelExceptionListener:
+        tags:
+            - { name:kernel.event_listener, event: kernel.exception }
+
     AppBundle\Serializer\:
         resource: '../../Serializer'
 
     app.security.user_provider:
         class: Pimcore\Security\User\ObjectUserProvider
         arguments: ['AppBundle\Model\DataObject\User', 'email']
+
