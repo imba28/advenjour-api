@@ -38,14 +38,29 @@ class EventCategorySerializer extends AbstractSerializer
         ]);
 
         if ($object->getImage() !== null) {
-            $singleResource->setRelationships([
-                'image' => $this->getSerializer(Asset::class)->serializeResourceIdentifier($object->getImage())
-            ]);
+            $singleResource->addRelationship(
+                'image', $this->getSerializer(Asset::class)->serializeResourceIdentifier($object->getImage())
+            );
 
             if ($this->includeFullResource('image')) {
-                $singleResource->setIncludes([
+                $singleResource->addInclude(
+                    'image',
                     $this->getSerializer(Asset::class)->serializeResource($object->getImage())
-                ]);
+                );
+            }
+        }
+
+        if ($object->getParentCategory() !== null) {
+            $singleResource->addRelationship(
+                'parentCategory',
+                $this->serializeResourceIdentifier($object->getParentCategory())
+            );
+
+            if ($this->includeFullResource('parentCategory')) {
+                $singleResource->addInclude(
+                    'parentCategory',
+                    $this->serializeResource($object->getParentCategory())
+                );
             }
         }
 

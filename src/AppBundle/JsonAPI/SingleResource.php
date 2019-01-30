@@ -5,9 +5,9 @@ class SingleResource extends ResourceIdentifier
 {
     private $attributes;
 
-    private $relationships;
+    private $relationships = [];
 
-    private $includes;
+    private $includes = [];
 
     public function setAttributes(array $attributes)
     {
@@ -24,9 +24,19 @@ class SingleResource extends ResourceIdentifier
         $this->relationships = $relationships;
     }
 
+    public function addRelationship($name, $relationship)
+    {
+        $this->relationships[$name] = $relationship;
+    }
+
     public function setIncludes(array $includes)
     {
         $this->includes = $includes;
+    }
+
+    public function addInclude($name, $include)
+    {
+        $this->includes[$name] = $include;
     }
 
     public function jsonSerialize()

@@ -34,6 +34,13 @@ class EventController extends ApiController
      *     type="string",
      *     description="Sort results ascending or descending order. Possible values are DESC and ASC"
      * )
+     * @SWG\Parameter(
+     *     name="include",
+     *     in="query",
+     *     description="If you wish to include specific relationships you can list them here (include[]=images)",
+     *     type="array",
+     *     @SWG\Items(type="string"),
+     * )
      * @SWG\Tag(name="Events")
      * @SWG\Response(response=200, description="List of requested objects")
      *
@@ -65,6 +72,14 @@ class EventController extends ApiController
      *     type="integer",
      *     description="The unqiue id of an existing event object."
      * )
+     * @SWG\Parameter(
+     *     name="include",
+     *     in="query",
+     *     description="If you wish to include specific relationships you can list them here (include[]=images)",
+     *     type="array",
+     *     @SWG\Items(type="string"),
+     * )
+     *
      * @SWG\Tag(name="Events")
      * @SWG\Response(response=200, description="The requested objects")
      *

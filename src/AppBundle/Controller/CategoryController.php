@@ -36,6 +36,13 @@ class CategoryController extends ApiController
      *     type="string",
      *     description="Sort results ascending or descending order. Possible values are DESC and ASC"
      * )
+     * @SWG\Parameter(
+     *     name="include",
+     *     in="query",
+     *     description="If you wish to include specific relationships you can list them here (include[]=images)",
+     *     type="array",
+     *     @SWG\Items(type="string"),
+     * ),
      * @SWG\Tag(name="EventCategory")
      * @SWG\Response(response=200, description="List of requested objects")
      *
@@ -72,7 +79,14 @@ class CategoryController extends ApiController
      *     in="path",
      *     type="integer",
      *     description="The unqiue id of an existing category object."
-     * )
+     * ),
+     * @SWG\Parameter(
+     *     name="include",
+     *     in="query",
+     *     description="If you wish to include specific relationships you can list them here (include[]=images)",
+     *     type="array",
+     *     @SWG\Items(type="string"),
+     * ),
      * @SWG\Tag(name="EventCategory")
      * @SWG\Response(response=200, description="The requested objects")
      *

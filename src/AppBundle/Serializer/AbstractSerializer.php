@@ -28,7 +28,11 @@ abstract class AbstractSerializer implements SerializerInterface
      */
     protected function includeFullResource(string $name): bool
     {
-        return in_array($name, $this->masterRequest->get('include', []));
+        $includes = $this->masterRequest->get('include', []);
+        if (is_string($includes)) {
+            $includes = explode(',', $includes);
+        }
+        return in_array($name, $includes);
     }
 
     /**
