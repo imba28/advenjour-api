@@ -3,11 +3,20 @@ namespace AppBundle\Controller;
 
 use AppBundle\Serializer\SerializerFactory;
 use Pimcore\Model\DataObject\Event;
+use Pimcore\Model\DataObject\EventCategory;
+use Respect\Validation\Exceptions\ValidationException;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Swagger\Annotations as SWG;
+use Respect\Validation\Validator as v;
 
+/**
+ * @SWG\Tag(name="Events")
+ * Class EventController
+ * @package AppBundle\Controller
+ */
 class EventController extends ApiController
 {
     private $factory;
@@ -41,7 +50,6 @@ class EventController extends ApiController
      *     type="array",
      *     @SWG\Items(type="string"),
      * )
-     * @SWG\Tag(name="Events")
      * @SWG\Response(response=200, description="List of requested objects")
      *
      * @param Request $request
@@ -80,7 +88,6 @@ class EventController extends ApiController
      *     @SWG\Items(type="string"),
      * )
      *
-     * @SWG\Tag(name="Events")
      * @SWG\Response(response=200, description="The requested objects")
      *
      * @param Request $request
@@ -94,5 +101,79 @@ class EventController extends ApiController
         }
 
         throw new NotFoundHttpException('Item not found!');
+    }
+
+
+    /**
+     * Create an event object.
+     *
+     * @Route("/events.json", methods={"PUT"})
+     * @param Request $request
+     *
+     * @SWG\Parameter(
+     *   name="body",
+     *   in="body",
+     *   required=true,
+     *   @SWG\Schema(
+     *       @SWG\Property(
+     *          property="name",
+     *          minimum="3",
+     *          type="string",
+     *       ),
+     *       @SWG\Property(
+     *          property="description",
+     *          type="string",
+     *       ),
+     *       @SWG\Property(
+     *          property="categories",
+     *          type="array",
+     *          @SWG\Items(type="integer")
+     *       )
+     *    )
+     * )
+     * @SWG\Response(response=201, description="User successfuly created")
+     * @SWG\Response(response=422, description="Validation error. Check submitted json for errors.")
+     * @return \Symfony\Component\HttpFoundation\JsonResponse
+     */
+    public function updateAction(Request $request)
+    {
+        $input = json_decode($request->getContent(), true);
+        $validators = v::key('name', v::stringType()->length(3))
+            ->key('description', v::stringType())
+            ->key('categories', v::arrayVal())
+            ->key('categories', v::each(v::callback(function($categoryId) {
+                return EventCategory::getById($categoryId) !== null;
+            })));
+
+        try {
+            $validators->assert($input);
+
+            $event = Event::create($input);
+            $event->setKey($input['name'] . '-' . time());
+            $event->setParentId(2);
+            $event->setPublished(true);
+
+            $categories = array_map(function($categoryId) {
+                return EventCategory::getById($categoryId);
+            }, $input['categories']);
+
+            $event->setCategories($categories);
+
+            $event->save();
+
+            return $this->success($this->factory->build(Event::class)->serializeResource($event), Response::HTTP_CREATED);
+        } catch (ValidationException $e) {
+            $errors = array_filter(
+                $e->findMessages([
+                    'name' => $this->get('translator')->trans('auth.register.errors.name'),
+                    'description' => $this->get('translator')->trans('auth.register.errors.description'),
+                    'categories' => $this->get('translator')->trans('auth.register.errors.categories'),
+                ])
+            );
+
+            return $this->error($errors, Response::HTTP_UNPROCESSABLE_ENTITY);
+        } catch (\Exception $e) {
+            return $this->error('Model validation failed.', Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
     }
 }

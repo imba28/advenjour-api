@@ -5,6 +5,7 @@ use AppBundle\JsonAPI\ResourceIdentifier;
 use AppBundle\JsonAPI\SingleResource;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject\Event;
+use Pimcore\Model\DataObject\EventCategory;
 
 class EventSerializer extends AbstractSerializer
 {
@@ -49,13 +50,23 @@ class EventSerializer extends AbstractSerializer
             ]
         ]);
 
-        if (count($object->getImages()->getItems()) > 0) {
+        if ($object->getImages() && count($object->getImages()->getItems()) > 0) {
             $resource->setRelationships([
                 'images' => $this->getSerializer(Asset::class)->serializeResourceIdentifierArray($object->getImages()->getItems()),
             ]);
 
             if ($this->includeFullResource('images')) {
                 $resource->setIncludes($this->getSerializer(Asset::class)->serializeResourceArray($object->getImages()->getItems()));
+            }
+        }
+
+        if (count($object->getCategories()) > 0) {
+            $resource->setRelationships([
+                'categories' => $this->getSerializer(EventCategory::class)->serializeResourceIdentifierArray($object->getCategories()),
+            ]);
+
+            if ($this->includeFullResource('categories')) {
+                $resource->setIncludes($this->getSerializer(EventCategory::class)->serializeResourceArray($object->getCategories()));
             }
         }
 
