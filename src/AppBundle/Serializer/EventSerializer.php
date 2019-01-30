@@ -3,7 +3,7 @@ namespace AppBundle\Serializer;
 
 use Pimcore\Model\DataObject\Event;
 
-class EventSerializer
+class EventSerializer implements SerializerInterface
 {
     /**
      * Serialize event object. Extracts all properties that should be accessible via the api.
@@ -11,7 +11,7 @@ class EventSerializer
      * @param Event $event
      * @return array
      */
-    public function serialize(Event $event)
+    public function serialize($event): ?array
     {
         return [
             'name' => $event->getName(),
@@ -34,7 +34,7 @@ class EventSerializer
      * @param array $list
      * @return array
      */
-    public function serializeArray(array $list)
+    public function serializeArray(array $list): array
     {
         $json = [];
 

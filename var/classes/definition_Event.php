@@ -1,7 +1,7 @@
 <?php 
 
 /** 
-* Generated at: 2019-01-28T16:06:31+01:00
+* Generated at: 2019-01-30T09:44:03+01:00
 * Inheritance: no
 * Variants: no
 * Changed by: admin (2)
@@ -16,6 +16,7 @@ Fields Summary:
 - from [datetime]
 - to [datetime]
 - locations [advancedManyToManyRelation]
+- categories [manyToManyObjectRelation]
 */ 
 
 
@@ -24,7 +25,7 @@ return Pimcore\Model\DataObject\ClassDefinition::__set_state(array(
    'name' => 'Event',
    'description' => '',
    'creationDate' => 0,
-   'modificationDate' => 1548687990,
+   'modificationDate' => 1548837843,
    'userOwner' => 2,
    'userModification' => 2,
    'parentClass' => '',
@@ -307,18 +308,10 @@ return Pimcore\Model\DataObject\ClassDefinition::__set_state(array(
                  'assetsAllowed' => false,
                  'assetTypes' => 
                 array (
-                  0 => 
-                  array (
-                    'assetTypes' => '',
-                  ),
                 ),
                  'documentsAllowed' => false,
                  'documentTypes' => 
                 array (
-                  0 => 
-                  array (
-                    'documentTypes' => '',
-                  ),
                 ),
                  'lazyLoading' => true,
                  'classes' => 
@@ -335,7 +328,7 @@ return Pimcore\Model\DataObject\ClassDefinition::__set_state(array(
                  'mandatory' => false,
                  'noteditable' => false,
                  'index' => false,
-                 'locked' => NULL,
+                 'locked' => false,
                  'style' => '',
                  'permissions' => NULL,
                  'datatype' => 'data',
@@ -347,6 +340,39 @@ return Pimcore\Model\DataObject\ClassDefinition::__set_state(array(
                   0 => 'datefrom',
                   1 => 'dateto',
                 ),
+              )),
+              3 => 
+              Pimcore\Model\DataObject\ClassDefinition\Data\ManyToManyObjectRelation::__set_state(array(
+                 'fieldtype' => 'manyToManyObjectRelation',
+                 'width' => '',
+                 'height' => '',
+                 'maxItems' => '',
+                 'queryColumnType' => 'text',
+                 'phpdocType' => 'array',
+                 'relationType' => true,
+                 'visibleFields' => 'id,fullpath,key,published,creationDate,modificationDate,filename,classname',
+                 'lazyLoading' => true,
+                 'classes' => 
+                array (
+                  0 => 
+                  array (
+                    'classes' => 'EventCategory',
+                  ),
+                ),
+                 'pathFormatterClass' => '',
+                 'name' => 'categories',
+                 'title' => 'Kategorien',
+                 'tooltip' => '',
+                 'mandatory' => false,
+                 'noteditable' => false,
+                 'index' => false,
+                 'locked' => NULL,
+                 'style' => '',
+                 'permissions' => NULL,
+                 'datatype' => 'data',
+                 'invisible' => false,
+                 'visibleGridView' => false,
+                 'visibleSearch' => false,
               )),
             ),
              'locked' => false,

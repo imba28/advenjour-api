@@ -3,7 +3,7 @@ namespace AppBundle\Serializer;
 
 use Pimcore\Model\DataObject\User;
 
-class UserSerializer
+class UserSerializer implements SerializerInterface
 {
     /**
      * Serialize event object. Extracts all properties that should be accessible via the api.
@@ -11,7 +11,7 @@ class UserSerializer
      * @param User $user
      * @return array
      */
-    public function serialize(User $user)
+    public function serialize($user): ?array
     {
         return [
             'id' => $user->getId(),
@@ -27,7 +27,7 @@ class UserSerializer
      * @param User[] $list
      * @return array
      */
-    public function serializeArray(array $list)
+    public function serializeArray(array $list): array
     {
         $json = [];
 
