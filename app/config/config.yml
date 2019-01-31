@@ -18,8 +18,8 @@ nelmio_api_doc:
         securityDefinitions:
             Bearer:
                 type: apiKey
-                description: 'Value: Bearer {jwt}'
-                name: Authorization
+                description: '{jwt}'
+                name: 'X-AUTH-TOKEN'
                 in: header
         security:
                 - Bearer: []

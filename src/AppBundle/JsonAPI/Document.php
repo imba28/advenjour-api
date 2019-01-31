@@ -7,9 +7,16 @@ class Document implements \JsonSerializable
 
     private $errors = null;
 
+    private $metadata = [];
+
     public function __construct($data = null)
     {
         $this->data = $data;
+    }
+
+    public function addMetadata($key, $value)
+    {
+        $this->metadata[$key] = $value;
     }
 
     public function addError($error) {
@@ -20,7 +27,8 @@ class Document implements \JsonSerializable
     {
         if ($this->errors === null) {
             return [
-                'data' => $this->data
+                'data' => $this->data,
+                'meta' => $this->metadata
             ];
         } else {
             return [

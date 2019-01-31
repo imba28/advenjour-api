@@ -31,9 +31,14 @@ class ApiController extends FrontendController
      * @param int $httpStatus
      * @return \Symfony\Component\HttpFoundation\JsonResponse
      */
-    public function success($data, $httpStatus = 200)
+    public function success($data, $httpStatus = 200, array $metadata = null)
     {
         $document = new Document($data);
+        if ($metadata) {
+            foreach ($metadata as $key => $value) {
+                $document->addMetadata($key, $value);
+            }
+        }
         return $this->json($document, $httpStatus);
     }
 

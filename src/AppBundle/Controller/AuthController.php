@@ -3,6 +3,8 @@ namespace AppBundle\Controller;
 
 use AppBundle\Model\DataObject\User;
 use AppBundle\Serializer\UserSerializer;
+use Firebase\JWT\JWT;
+use Pimcore\Tool;
 use Respect\Validation\Exceptions\ValidationException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -46,8 +48,20 @@ class AuthController extends ApiController
         /** @var User $user */
         $user = $this->getUser();
 
+
         if ($user && $this->isGranted('ROLE_USER')) {
-            return $this->success($this->serializer->serializeResource($user));
+            $payload = [
+                'iss' => Tool::getHostUrl(),
+                'aud' => Tool::getHostUrl(),
+                'iat' => time(),
+                'sub' => 'user',
+                'uid' => $user->getId(),
+                'email' => $user->getEmail()
+            ];
+
+            return $this->success($this->serializer->serializeResource($user), 200, [
+                'jwtToken' => JWT::encode($payload, $this->getParameter('secret'))
+            ]);
         }
     }
 

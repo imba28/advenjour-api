@@ -27,12 +27,14 @@ services:
         resource: '../../Serializer'
         public: true
 
-    AppBundle\Service\:
-        resource: '../../Service'
-
     app.security.user_provider:
         class: Pimcore\Security\User\ObjectUserProvider
         arguments: ['AppBundle\Model\DataObject\User', 'email']
+
+    app.security.jwt_authenticator:
+        class: AppBundle\Security\JwtAuthenticator
+        arguments:
+            - %secret%
 
     app.security.authentication_error_handler:
         class: AppBundle\EventListener\AuthenticationFailureHandler
