@@ -106,7 +106,7 @@ class JwtAuthenticator extends AbstractGuardAuthenticator
     {
         $payload = $this->getPayload($credentials['token']);
 
-        if ($payload->email == $user->getEmail()) {
+        if ($payload->email !== $user->getEmail()) {
             return false;
         }
 
