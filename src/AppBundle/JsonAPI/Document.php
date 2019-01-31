@@ -3,9 +3,9 @@ namespace AppBundle\JsonAPI;
 
 class Document implements \JsonSerializable
 {
-    private $data;
+    private $data = [];
 
-    private $errors;
+    private $errors = null;
 
     public function __construct($data = null)
     {
@@ -18,7 +18,7 @@ class Document implements \JsonSerializable
 
     public function jsonSerialize()
     {
-        if ($this->data) {
+        if ($this->errors === null) {
             return [
                 'data' => $this->data
             ];
