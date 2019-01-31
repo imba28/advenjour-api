@@ -37,6 +37,7 @@ class EventController extends ApiController
      * List of event objects.
      *
      * @Route("/events.json", methods={"GET"})
+     * @Route("/category/{id}/events.json", methods={"GET"})
      *
      * @SWG\Parameter(
      *     name="orderBy",
@@ -66,11 +67,15 @@ class EventController extends ApiController
     public function listAction(Request $request)
     {
         $list = new Event\Listing();
+
         if ($orderBy = $request->get('orderBy')) {
             $list->setOrderKey($this->escapePropertyString($orderBy));
         }
         if ($order = $request->get('order')) {
             $list->setOrder($this->escapePropertyString($order));
+        }
+        if ($categoryId = $request->get('id')) {
+            $list->setCondition('FIND_IN_SET(?, categories)', [$categoryId]);
         }
 
         return $this->success($this->factory->build(Event::class)->serializeResourceArray($list->load()));
