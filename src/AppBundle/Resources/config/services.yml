@@ -27,6 +27,9 @@ services:
         resource: '../../Serializer'
         public: true
 
+    AppBundle\Service\:
+        resource: '../../Service'
+
     app.security.user_provider:
         class: Pimcore\Security\User\ObjectUserProvider
         arguments: ['AppBundle\Model\DataObject\User', 'email']
