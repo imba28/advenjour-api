@@ -51,22 +51,22 @@ class EventSerializer extends AbstractSerializer
         ]);
 
         if ($object->getImages() && count($object->getImages()->getItems()) > 0) {
-            $resource->setRelationships([
-                'images' => $this->getSerializer(Asset::class)->serializeResourceIdentifierArray($object->getImages()->getItems()),
-            ]);
+            $resource->addRelationship(
+                'images', $this->getSerializer(Asset::class)->serializeResourceIdentifierArray($object->getImages()->getItems()),
+            );
 
             if ($this->includeFullResource('images')) {
-                $resource->setIncludes($this->getSerializer(Asset::class)->serializeResourceArray($object->getImages()->getItems()));
+                $resource->addInclude('images', $this->getSerializer(Asset::class)->serializeResourceArray($object->getImages()->getItems()));
             }
         }
 
         if (count($object->getCategories()) > 0) {
-            $resource->setRelationships([
-                'categories' => $this->getSerializer(EventCategory::class)->serializeResourceIdentifierArray($object->getCategories()),
-            ]);
+            $resource->addRelationship(
+                'categories', $this->getSerializer(EventCategory::class)->serializeResourceIdentifierArray($object->getCategories()),
+            );
 
             if ($this->includeFullResource('categories')) {
-                $resource->setIncludes($this->getSerializer(EventCategory::class)->serializeResourceArray($object->getCategories()));
+                $resource->addInclude('categories', $this->getSerializer(EventCategory::class)->serializeResourceArray($object->getCategories()));
             }
         }
 
