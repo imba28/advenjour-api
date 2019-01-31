@@ -146,7 +146,7 @@ class EventController extends ApiController
      * @SWG\Response(response=422, description="Validation error. Check submitted json for errors.")
      * @return \Symfony\Component\HttpFoundation\JsonResponse
      */
-    public function updateAction(Request $request)
+    public function createAction(Request $request)
     {
         $input = json_decode($request->getContent(), true);
         $validators = v::key('name', v::stringType()->length(3))
@@ -163,6 +163,7 @@ class EventController extends ApiController
             $event->setKey($input['name'] . '-' . time());
             $event->setParentId(2);
             $event->setPublished(true);
+            $event->setUser($this->getUser());
 
             $categories = array_map(function($categoryId) {
                 return EventCategory::getById($categoryId);

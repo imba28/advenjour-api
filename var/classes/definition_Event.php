@@ -1,7 +1,7 @@
 <?php 
 
 /** 
-* Generated at: 2019-01-30T11:32:17+01:00
+* Generated at: 2019-01-31T09:39:33+01:00
 * Inheritance: no
 * Variants: no
 * Changed by: admin (2)
@@ -18,6 +18,7 @@ Fields Summary:
 - images [imageGallery]
 - locations [advancedManyToManyRelation]
 - categories [manyToManyObjectRelation]
+- user [manyToOneRelation]
 */ 
 
 
@@ -26,7 +27,7 @@ return Pimcore\Model\DataObject\ClassDefinition::__set_state(array(
    'name' => 'Event',
    'description' => '',
    'creationDate' => 0,
-   'modificationDate' => 1548844337,
+   'modificationDate' => 1548923972,
    'userOwner' => 2,
    'userModification' => 2,
    'parentClass' => '',
@@ -302,7 +303,7 @@ return Pimcore\Model\DataObject\ClassDefinition::__set_state(array(
                  'mandatory' => false,
                  'noteditable' => false,
                  'index' => false,
-                 'locked' => NULL,
+                 'locked' => false,
                  'style' => '',
                  'permissions' => NULL,
                  'datatype' => 'data',
@@ -403,6 +404,50 @@ return Pimcore\Model\DataObject\ClassDefinition::__set_state(array(
                  'noteditable' => false,
                  'index' => false,
                  'locked' => false,
+                 'style' => '',
+                 'permissions' => NULL,
+                 'datatype' => 'data',
+                 'invisible' => false,
+                 'visibleGridView' => false,
+                 'visibleSearch' => false,
+              )),
+              5 => 
+              Pimcore\Model\DataObject\ClassDefinition\Data\ManyToOneRelation::__set_state(array(
+                 'fieldtype' => 'manyToOneRelation',
+                 'width' => '',
+                 'assetUploadPath' => '',
+                 'relationType' => true,
+                 'queryColumnType' => 
+                array (
+                  'id' => 'int(11)',
+                  'type' => 'enum(\'document\',\'asset\',\'object\')',
+                ),
+                 'phpdocType' => '\\Pimcore\\Model\\Document\\Page | \\Pimcore\\Model\\Document\\Snippet | \\Pimcore\\Model\\Document | \\Pimcore\\Model\\Asset | \\Pimcore\\Model\\DataObject\\AbstractObject',
+                 'objectsAllowed' => true,
+                 'assetsAllowed' => false,
+                 'assetTypes' => 
+                array (
+                ),
+                 'documentsAllowed' => false,
+                 'documentTypes' => 
+                array (
+                ),
+                 'lazyLoading' => true,
+                 'classes' => 
+                array (
+                  0 => 
+                  array (
+                    'classes' => 'User',
+                  ),
+                ),
+                 'pathFormatterClass' => '',
+                 'name' => 'user',
+                 'title' => 'Benutzer',
+                 'tooltip' => '',
+                 'mandatory' => false,
+                 'noteditable' => true,
+                 'index' => false,
+                 'locked' => NULL,
                  'style' => '',
                  'permissions' => NULL,
                  'datatype' => 'data',
