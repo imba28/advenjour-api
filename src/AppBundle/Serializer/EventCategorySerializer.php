@@ -9,11 +9,16 @@ class EventCategorySerializer extends AbstractSerializer
 {
     public function serializeResourceIdentifier($object): ResourceIdentifier
     {
-        if (!$object instanceof EventCategory) {
+        if (!$this->supports(get_class($object))) {
             $this->throwInvalidTypeException($object, EventCategory::class);
         }
 
         return $this->getResourceIdentifier($object->getId(), $object->getClassName());
+    }
+
+    public function supports(string $className): bool
+    {
+        return $className === EventCategory::class;
     }
 
     /**
@@ -25,9 +30,10 @@ class EventCategorySerializer extends AbstractSerializer
      */
     public function serializeResource($object): ResourceIdentifier
     {
-        if (!$object instanceof EventCategory) {
+        if (!$this->supports(get_class($object))) {
             $this->throwInvalidTypeException($object, EventCategory::class);
         }
+
         $this->getSerializer(Asset::class)->setThumbnails([
             'eventCategoryOverview'
         ]);

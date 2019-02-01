@@ -1,41 +1,48 @@
 <?php
 namespace AppBundle\Serializer;
 
-use AppBundle\Model\DataObject\User;
-use Pimcore\Model\Asset;
-use Pimcore\Model\DataObject\Event;
-use Pimcore\Model\DataObject\EventCategory;
-use Symfony\Component\DependencyInjection\ContainerInterface;
-
+/**
+ * Class SerializerFactory
+ * @package AppBundle\Serializer
+ */
 class SerializerFactory
 {
-    private $container;
+    /**
+     * @var SerializerInterface[]
+     */
+    private $services = [];
 
-    public function __construct(ContainerInterface $container)
+    /**
+     * SerializeFactory constructor.
+     * Tagged serializer services are automatically injected through di container.
+     *
+     * SerializerFactory constructor.
+     * @param iterable $serializerServices
+     */
+    public function __construct(iterable $serializerServices)
     {
-        $this->container = $container;
+        $this->services = $serializerServices;
     }
 
+    /**
+     * Get a serializer service for a given class name or object.
+     *
+     * @param string|object $class
+     * @return SerializerInterface
+     * @throws \Exception
+     */
     public function build($class): SerializerInterface
     {
         if (is_object($class)) {
             $class = get_class($class);
         }
 
-        switch ($class) {
-            case Asset::class:
-                return $this->container->get(AssetSerializer::class);
-
-            case Event::class:
-                return $this->container->get(EventSerializer::class);
-
-            case EventCategory::class:
-                return $this->container->get(EventCategorySerializer::class);
-
-            case User::class:
-                return $this->container->get(UserSerializer::class);
+        foreach ($this->services as $service) {
+            if ($service->supports($class)) {
+                return $service;
+            }
         }
 
-        throw new \Exception('Factory does not handle this kind of object.');
+        throw new \Exception('Factory does not support this kind of object.');
     }
 }

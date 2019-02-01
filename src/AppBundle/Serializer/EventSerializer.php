@@ -16,11 +16,16 @@ class EventSerializer extends AbstractSerializer
      */
     public function serializeResourceIdentifier($object): ResourceIdentifier
     {
-        if (!$object instanceof Event) {
+        if (!$this->supports(get_class($object))) {
             $this->throwInvalidTypeException($object, Event::class);
         }
 
         return $this->getResourceIdentifier($object->getId(), $object->getClassName());
+    }
+
+    public function supports(string $className): bool
+    {
+        return $className === Event::class;
     }
 
     /**
@@ -32,7 +37,7 @@ class EventSerializer extends AbstractSerializer
      */
     public function serializeResource($object): ResourceIdentifier
     {
-        if (!$object instanceof Event) {
+        if (!$this->supports(get_class($object))) {
             $this->throwInvalidTypeException($object, Event::class);
         }
 
@@ -51,22 +56,32 @@ class EventSerializer extends AbstractSerializer
         ]);
 
         if ($object->getImages() && count($object->getImages()->getItems()) > 0) {
+            $assetSerializer = $this->getSerializer(Asset::class);
             $resource->addRelationship(
-                'images', $this->getSerializer(Asset::class)->serializeResourceIdentifierArray($object->getImages()->getItems()),
+                'images', $assetSerializer->serializeResourceIdentifierArray($object->getImages()->getItems())
             );
 
             if ($this->includeFullResource('images')) {
-                $resource->addInclude('images', $this->getSerializer(Asset::class)->serializeResourceArray($object->getImages()->getItems()));
+                $resource->addInclude(
+                    'images',
+                    $assetSerializer->serializeResourceArray($object->getImages()->getItems())
+                );
             }
         }
 
         if (count($object->getCategories()) > 0) {
+            $eventSerializer = $this->getSerializer(EventCategory::class);
+
             $resource->addRelationship(
-                'categories', $this->getSerializer(EventCategory::class)->serializeResourceIdentifierArray($object->getCategories()),
+                'categories',
+                $eventSerializer->serializeResourceIdentifierArray($object->getCategories())
             );
 
             if ($this->includeFullResource('categories')) {
-                $resource->addInclude('categories', $this->getSerializer(EventCategory::class)->serializeResourceArray($object->getCategories()));
+                $resource->addInclude(
+                    'categories',
+                    $eventSerializer->serializeResourceArray($object->getCategories())
+                );
             }
         }
 

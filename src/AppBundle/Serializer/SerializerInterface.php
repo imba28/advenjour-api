@@ -5,6 +5,8 @@ use AppBundle\JsonAPI\ResourceIdentifier;
 
 interface SerializerInterface
 {
+    public function supports(string $className): bool;
+
     public function serializeResource($object): ResourceIdentifier;
     public function serializeResourceArray(array $array): array;
 

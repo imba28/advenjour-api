@@ -9,6 +9,11 @@ services:
         # if you need to do this, you can override this setting on individual services
         public: false
 
+    # tag all serializer services
+    _instanceof:
+        AppBundle\Serializer\SerializerInterface:
+            tags: ['app.api.serializer']
+
     # auto-register all controllers as services
     AppBundle\Controller\:
         resource: '../../Controller'
@@ -25,7 +30,10 @@ services:
 
     AppBundle\Serializer\:
         resource: '../../Serializer'
-        public: true
+
+    # inject all tagged services as parameter into factoy
+    AppBundle\Serializer\SerializerFactory:
+        arguments: [!tagged 'app.api.serializer' ]
 
     app.security.user_provider:
         class: Pimcore\Security\User\ObjectUserProvider

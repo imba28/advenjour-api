@@ -7,7 +7,7 @@ use Pimcore\Model\Asset\Image;
 use Pimcore\Model\DataObject\Data\Hotspotimage;
 use Pimcore\Tool;
 
-class AssetSerializer extends AbstractSerializer
+class AssetSerializer extends AbstractPimcoreModelSerializer
 {
     private $thumbnails = [];
 
@@ -15,28 +15,9 @@ class AssetSerializer extends AbstractSerializer
         $this->thumbnails = $array;
     }
 
-    public function serializeResourceIdentifier($object): ResourceIdentifier
+    public function supports(string $className): bool
     {
-        if (!$object instanceof Asset) {
-            $this->throwInvalidTypeException($object, Asset::class);
-        }
-
-        return $this->getResourceIdentifier($object->getId(), ucfirst($object->getType()));
-    }
-
-    public function serializeResourceIdentifierArray(array $array): array
-    {
-        $images = [];
-
-        foreach ($array as $item) {
-            if ($item instanceof Asset) {
-                $images[] = $item;
-            } else if ($item instanceof Hotspotimage) {
-                $images[] = $item->getImage();
-            }
-        }
-
-        return parent::serializeResourceIdentifierArray($images);
+        return $className === Asset::class || $className === Hotspotimage::class;
     }
 
     public function serializeResource($object): ResourceIdentifier
@@ -45,7 +26,7 @@ class AssetSerializer extends AbstractSerializer
             return null;
         }
 
-        if (!$object instanceof Asset) {
+        if (!$object instanceof Asset && !$object instanceof Hotspotimage) {
             $this->throwInvalidTypeException($object, Asset::class);
         }
 
@@ -72,6 +53,22 @@ class AssetSerializer extends AbstractSerializer
 
     public function serializeResourceArray(array $array): array
     {
+        return parent::serializeResourceArray($this->resolveAssets($array));
+    }
+
+    public function serializeResourceIdentifierArray(array $array): array
+    {
+        return parent::serializeResourceIdentifierArray($this->resolveAssets($array));
+    }
+
+    /**
+     * Resolve assets. For example we need to unwrap hotspotimages.
+     *
+     * @param array $array
+     * @return array
+     */
+    private function resolveAssets(array $array): array
+    {
         $images = [];
 
         foreach ($array as $object) {
@@ -81,7 +78,6 @@ class AssetSerializer extends AbstractSerializer
                 $images[] = $object->getImage();
             }
         }
-
-        return parent::serializeResourceArray($images);
+        return $images;
     }
 }
