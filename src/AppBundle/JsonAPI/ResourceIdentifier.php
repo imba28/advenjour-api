@@ -20,4 +20,14 @@ class ResourceIdentifier implements \JsonSerializable
             'type' => $this->type
         ];
     }
+
+    public function getIdentifier(): int
+    {
+        return $this->identifier;
+    }
+
+    public function getType(): string
+    {
+        return $this->type;
+    }
 }
