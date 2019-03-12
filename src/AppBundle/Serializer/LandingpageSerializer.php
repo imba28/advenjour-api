@@ -24,16 +24,16 @@ class LandingpageSerializer extends AbstractPimcoreModelSerializer
             "heroSlide"
         ]);
 
-        $images = $object->getSliderImages()->getItems();
+        $items = $object->getSliderItems();
 
         $resource = $this->getSingleResource($object->getId(), $object->getClassName());
         $resource->addRelationship(
-            'images',
-            $assetSerializer->serializeResourceIdentifierArray($images)
+            'items',
+            $assetSerializer->serializeResourceIdentifierArray($items)
         );
 
-        if ($this->includeFullResource('images')) {
-            $resource->addInclude('images', $assetSerializer->serializeResourceArray($images));
+        if ($this->includeFullResource('items')) {
+            $resource->addInclude('items', $assetSerializer->serializeResourceArray($items));
         }
 
         return $resource;

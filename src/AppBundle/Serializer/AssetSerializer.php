@@ -37,13 +37,19 @@ class AssetSerializer extends AbstractPimcoreModelSerializer
             'description' => $object->getMetadata('description'),
         ]);
 
-        if ($object instanceof Image) {
-            $thumbnails = array_map(
-                function ($thumbnail) use ($object) {
-                    return Tool::getHostUrl() . $object->getThumbnail($thumbnail)->getPath(true);
-                },
-                $this->thumbnails
-            );
+        if ($object instanceof Image || $object instanceof Asset\Video) {
+            $thumbnails = [];
+            foreach ($this->thumbnails as $thumbnail) {
+                try {
+                    if ($object instanceof Asset\Video) {
+                        $path = $object->getImageThumbnail($thumbnail);
+                    } else {
+                        $path =  $object->getThumbnail($thumbnail)->getPath(true);
+                    }
+
+                    $thumbnails[$thumbnail] = Tool::getHostUrl() . $path;
+                } catch (\Exception $e) {}
+            }
 
             $resource->addAttribute('thumbnails', $thumbnails);
         }

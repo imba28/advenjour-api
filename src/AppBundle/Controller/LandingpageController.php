@@ -36,9 +36,9 @@ class LandingpageController extends ApiController
      * @SWG\Parameter(
      *     name="include",
      *     in="query",
-     *     description="If you wish to include specific relationships you can list them here (include[]=images)",
+     *     description="If you wish to include specific relationships you can list them here (include[]=items)",
      *     type="array",
-     *     @SWG\Items(type="string", enum={"images"}),
+     *     @SWG\Items(type="string", enum={"items"}),
      * )
      *
      * @SWG\Tag(name="LandingPage")

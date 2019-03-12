@@ -1,7 +1,7 @@
 <?php 
 
 /** 
-* Generated at: 2019-02-01T09:39:35+01:00
+* Generated at: 2019-03-12T13:33:02+01:00
 * Inheritance: no
 * Variants: no
 * Changed by: admin (2)
@@ -9,7 +9,7 @@
 
 
 Fields Summary: 
-- sliderImages [imageGallery]
+- sliderItems [manyToManyRelation]
 */ 
 
 
@@ -18,7 +18,7 @@ return Pimcore\Model\DataObject\ClassDefinition::__set_state(array(
    'name' => 'ConfigLandingpage',
    'description' => '',
    'creationDate' => 0,
-   'modificationDate' => 1549010375,
+   'modificationDate' => 1552393981,
    'userOwner' => 2,
    'userModification' => 2,
    'parentClass' => '',
@@ -65,36 +65,55 @@ return Pimcore\Model\DataObject\ClassDefinition::__set_state(array(
          'childs' => 
         array (
           0 => 
-          Pimcore\Model\DataObject\ClassDefinition\Data\ImageGallery::__set_state(array(
-             'fieldtype' => 'imageGallery',
-             'queryColumnType' => 
+          Pimcore\Model\DataObject\ClassDefinition\Data\ManyToManyRelation::__set_state(array(
+             'fieldtype' => 'manyToManyRelation',
+             'width' => '',
+             'height' => '',
+             'maxItems' => '',
+             'assetUploadPath' => '',
+             'queryColumnType' => 'text',
+             'phpdocType' => 'array',
+             'relationType' => true,
+             'objectsAllowed' => false,
+             'assetsAllowed' => true,
+             'assetTypes' => 
             array (
-              'images' => 'text',
-              'hotspots' => 'text',
+              0 => 
+              array (
+                'assetTypes' => 'image',
+              ),
+              1 => 
+              array (
+                'assetTypes' => 'video',
+              ),
             ),
-             'columnType' => 
+             'documentsAllowed' => false,
+             'documentTypes' => 
             array (
-              'images' => 'text',
-              'hotspots' => 'text',
+              0 => 
+              array (
+                'documentTypes' => '',
+              ),
             ),
-             'phpdocType' => '\\Pimcore\\Model\\DataObject\\Data\\ImageGallery',
-             'width' => NULL,
-             'height' => NULL,
-             'uploadPath' => NULL,
-             'ratioX' => NULL,
-             'ratioY' => NULL,
-             'predefinedDataTemplates' => NULL,
-             'name' => 'sliderImages',
-             'title' => 'Slider Bilder',
-             'tooltip' => NULL,
-             'mandatory' => NULL,
-             'noteditable' => NULL,
-             'index' => NULL,
+             'lazyLoading' => false,
+             'classes' => 
+            array (
+              0 => 
+              array (
+                'classes' => '',
+              ),
+            ),
+             'pathFormatterClass' => '',
+             'name' => 'sliderItems',
+             'title' => 'Slider Items',
+             'tooltip' => '',
+             'mandatory' => false,
+             'noteditable' => false,
+             'index' => false,
              'locked' => NULL,
-             'style' => NULL,
+             'style' => '',
              'permissions' => NULL,
              'datatype' => 'data',
-             'relationType' => false,
              'invisible' => false,
              'visibleGridView' => true,
              'visibleSearch' => true,
