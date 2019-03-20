@@ -121,7 +121,7 @@ class EventController extends ApiController
     /**
      * Create an event object.
      *
-     * @Route("/events.json", methods={"PUT"})
+     * @Route("/events.json", methods={"POST"})
      * @param Request $request
      *
      * @SWG\Parameter(
@@ -230,7 +230,7 @@ class EventController extends ApiController
     /**
      * Update an event object. Requires a complete set of properties.
      *
-     * @Route("/event/{id}.json", methods={"POST"}, requirements={"id"="\d+"})
+     * @Route("/event/{id}.json", methods={"PUT"}, requirements={"id"="\d+"})
      * @param Request $request
      *
      * @SWG\Parameter(
