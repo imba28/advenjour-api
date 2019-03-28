@@ -21,7 +21,8 @@ class LandingpageSerializer extends AbstractPimcoreModelSerializer
         /** @var AssetSerializer $assetSerializer */
         $assetSerializer = $this->getSerializer(Asset::class);
         $assetSerializer->setThumbnails([ // todo lg: serializer should not know about concrete class implementations
-            "heroSlide"
+            "heroSlide",
+            "lazy--heroSlide"
         ]);
 
         $items = $object->getSliderItems();
