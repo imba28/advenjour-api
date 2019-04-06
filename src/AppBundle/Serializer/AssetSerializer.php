@@ -44,11 +44,15 @@ class AssetSerializer extends AbstractPimcoreModelSerializer
                     if ($object instanceof Asset\Video) {
                         $path = $object->getImageThumbnail($thumbnail);
                     } else {
-                        $path =  $object->getThumbnail($thumbnail)->getPath(true);
+                        $path = $object->getThumbnail($thumbnail)->getPath(true);
                     }
 
                     $thumbnails[$thumbnail] = Tool::getHostUrl() . $path;
                 } catch (\Exception $e) {}
+            }
+
+            if ($object instanceof Image) {
+                $thumbnails["svgPlaceholder"] = Tool::getHostUrl() . $object->getLowQualityPreviewPath();
             }
 
             $resource->addAttribute('thumbnails', $thumbnails);
