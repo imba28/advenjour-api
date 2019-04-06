@@ -66,7 +66,11 @@ class SingleResource extends ResourceIdentifier
             }
         }
 
-        return array_merge($includes, array_values($this->includes));
+        foreach ($this->includes as $include) {
+            $includes = array_merge($includes, array_values($include));
+        }
+
+        return $includes;
     }
 
     public function jsonSerialize()
