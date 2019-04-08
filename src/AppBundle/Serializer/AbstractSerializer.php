@@ -3,6 +3,7 @@ namespace AppBundle\Serializer;
 
 use AppBundle\JsonAPI\ResourceIdentifier;
 use AppBundle\JsonAPI\SingleResource;
+use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\TokenManager\Single;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 abstract class AbstractSerializer implements SerializerInterface
@@ -128,5 +129,32 @@ abstract class AbstractSerializer implements SerializerInterface
         }
 
         return $json;
+    }
+
+    /**
+     * Creates empty singleResource from json array. This does NOT set set attributes though, because this should be handled by the concrete serializer class.
+     * @param array $data
+     * @return SingleResource
+     */
+    public function unserializeEmptyResource(array $data): SingleResource
+    {
+        $resource = new SingleResource($data['id'] ?? null, $data['type']);
+
+        if (isset($data['relationships']) && is_array($data['relationships'])) {
+            foreach ($data['relationships'] as $name => $relationship) {
+                if (is_array($relationship)) {
+                    $relation = [];
+                    foreach ($relationship as $resourceIdentifier) {
+                        $relation[] = new ResourceIdentifier($resourceIdentifier['id'], $resourceIdentifier['type']);
+                    }
+
+                    $resource->addRelationship($name, $relation);
+                } else {
+                    $resource->addRelationship($name, new ResourceIdentifier($relationship['id'], $relationship['type']));
+                }
+            }
+        }
+
+        return $resource;
     }
 }

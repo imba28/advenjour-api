@@ -1,18 +1,18 @@
 <?php
 namespace AppBundle\Controller;
 
+use AppBundle\Serializer\NotSerializableException;
 use AppBundle\Serializer\SerializerFactory;
-use AppBundle\Service\EventUpdateService;
+use AppBundle\Service\ResourceUpdateService;
 use Pimcore\Model\DataObject\Event;
-use Pimcore\Model\DataObject\EventCategory;
 use Respect\Validation\Exceptions\ValidationException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Swagger\Annotations as SWG;
-use Respect\Validation\Validator as v;
 
 /**
  * @SWG\Tag(name="Events")
@@ -124,66 +124,43 @@ class EventController extends ApiController
      * @Route("/events.json", methods={"POST"})
      * @param Request $request
      *
-     * @SWG\Parameter(
-     *   name="body",
-     *   in="body",
-     *   required=true,
-     *   @SWG\Schema(
-     *       @SWG\Property(
-     *          property="name",
-     *          minimum="3",
-     *          type="string",
-     *       ),
-     *       @SWG\Property(
-     *          property="description",
-     *          type="string",
-     *       ),
-     *       @SWG\Property(
-     *          property="categories",
-     *          type="array",
-     *          @SWG\Items(type="integer")
-     *       ),
-     *       @SWG\Property(
-     *          property="from",
-     *          type="integer",
-     *          description="Start of event, 32 bit integer unix timestamp"
-     *       ),
-     *       @SWG\Property(
-     *          property="to",
-     *          type="integer",
-     *          description="End of event, 32 bit integer unix timestamp"
-     *       ),
-     *       @SWG\Property(
-     *         property="price",
-     *         type="object",
-     *         @SWG\Property(property="value", type="integer"),
-     *         @SWG\Property(property="currency", type="string", enum={"€","$", "£"})
-     *       )
-     *    )
-     * )
+     * @param ResourceUpdateService $updateService
+     * @param SerializerFactory $factory
+     * @return \Symfony\Component\HttpFoundation\JsonResponse
+     * @throws \Exception
      *
      * @SWG\Response(response=201, description="User successfuly created")
      * @SWG\Response(response=422, description="Validation error. Check submitted json for errors.")
-     * @return \Symfony\Component\HttpFoundation\JsonResponse
      */
-    public function createAction(Request $request, EventUpdateService $updateService)
+    public function createAction(Request $request, ResourceUpdateService $updateService, SerializerFactory $factory)
     {
         $input = json_decode($request->getContent(), true);
-        $validators = $this->getValidators();
+
+        $serializer = $factory->build(Event::class);
 
         try {
-            $validators->assert($input);
+            // todo @lg this is ugly. should just require once method call!
+            $resource = $serializer->unserializeEmptyResource($input);
+            $serializer->unserializeResource($input, $resource);
+        } catch (NotSerializableException $e) {
+            throw new UnprocessableEntityHttpException($this->get('translator')->trans($e->getMessage()));
+        }
 
-            $event = new Event();
+        $event = new Event();
+        $event->setKey($input['attributes']['name'] . '-' . time());
+        $event->setParentId(2);
+        $event->setPublished(true);
+        $event->setUser($this->getUser());
 
-            $event->setKey($input['name'] . '-' . time());
-            $event->setParentId(2);
-            $event->setPublished(true);
-            $event->setUser($this->getUser());
+        if (!$this->getUser()) {
+            throw new HttpException(Response::HTTP_UNAUTHORIZED, $this->get('translator')->trans('event.errors.delete_unauthorized'));
+        }
 
-            $updateService->update($event, $input);
+        try {
+            $updateService->update($event, $resource);
 
             return $this->success($this->factory->build(Event::class)->serializeResource($event), Response::HTTP_CREATED);
+
         } catch (ValidationException $e) {
             $errors = array_filter(
                 $e->findMessages([
@@ -194,8 +171,6 @@ class EventController extends ApiController
             );
 
             return $this->error($errors, Response::HTTP_UNPROCESSABLE_ENTITY);
-        } catch (\Exception $e) {
-            return $this->error('Model validation failed.', Response::HTTP_UNPROCESSABLE_ENTITY);
         }
     }
 
@@ -233,55 +208,29 @@ class EventController extends ApiController
      * @Route("/event/{id}.json", methods={"PUT"}, requirements={"id"="\d+"})
      * @param Request $request
      *
-     * @SWG\Parameter(
-     *   name="body",
-     *   in="body",
-     *   required=true,
-     *   @SWG\Schema(
-     *       @SWG\Property(
-     *          property="name",
-     *          minimum="3",
-     *          type="string",
-     *       ),
-     *       @SWG\Property(
-     *          property="description",
-     *          type="string",
-     *       ),
-     *       @SWG\Property(
-     *          property="categories",
-     *          type="array",
-     *          @SWG\Items(type="integer")
-     *       ),
-     *       @SWG\Property(
-     *          property="from",
-     *          type="integer",
-     *          description="Start of event, 32 bit integer unix timestamp"
-     *       ),
-     *       @SWG\Property(
-     *          property="to",
-     *          type="integer",
-     *          description="End of event, 32 bit integer unix timestamp"
-     *       ),
-     *       @SWG\Property(
-     *         property="price",
-     *         type="object",
-     *         @SWG\Property(property="value", type="integer"),
-     *         @SWG\Property(property="currency", type="string", enum={"€","$", "£"})
-     *       )
-     *    )
-     * )
+     * @param ResourceUpdateService $updateService
+     * @param SerializerFactory $factory
+     * @return \Symfony\Component\HttpFoundation\JsonResponse
+     * @throws \Exception
      *
      * @SWG\Response(response=200, description="Event successfully updated.")
      * @SWG\Response(response=403, description="Authorization error. User must be owner of object.")
      * @SWG\Response(response=404, description="Event not found.")
      *
-     * @return \Symfony\Component\HttpFoundation\JsonResponse
-     * @throws \Exception
      */
-    public function updateAction(Request $request, EventUpdateService $updateService)
+    public function updateAction(Request $request, ResourceUpdateService $updateService, SerializerFactory $factory)
     {
         $input = json_decode($request->getContent(), true);
-        $validators = $this->getValidators();
+
+        $serializer = $factory->build(Event::class);
+
+        try {
+            // todo @lg this is ugly. should just require once method call!
+            $resource = $serializer->unserializeEmptyResource($input);
+            $serializer->unserializeResource($input, $resource);
+        } catch (NotSerializableException $e) {
+            throw new UnprocessableEntityHttpException($this->get('translator')->trans($e->getMessage()));
+        }
 
         if ($event = Event::getById($request->get('id'))) {
             if ($this->getUser() !== $event->getUser()) {
@@ -289,8 +238,7 @@ class EventController extends ApiController
             }
 
             try {
-                $validators->assert($input);
-                $updateService->update($event, $input);
+                $updateService->update($event, $resource);
 
                 return $this->success($this->factory->build(Event::class)->serializeResource($event));
 
@@ -308,21 +256,5 @@ class EventController extends ApiController
         }
 
         throw new NotFoundHttpException('Item not found!');
-    }
-
-    /**
-     * Create validators for event object.
-     *
-     * @return v
-     */
-    protected function getValidators(): v
-    {
-        $validators = v::key('name', v::stringType()->length(3))
-            ->key('description', v::stringType())
-            ->key('categories', v::arrayVal())
-            ->key('categories', v::each(v::callback(function ($categoryId) {
-                return EventCategory::getById($categoryId) !== null;
-            })));
-        return $validators;
     }
 }

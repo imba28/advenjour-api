@@ -1,13 +1,15 @@
 <?php
 namespace AppBundle\JsonAPI;
 
+use Pimcore\Model\Element\ElementInterface;
+
 class ResourceIdentifier implements \JsonSerializable
 {
     private $identifier;
 
     private $type;
 
-    public function __construct(int $identifier, string $type)
+    public function __construct(?int $identifier, string $type)
     {
         $this->identifier = $identifier;
         $this->type = ucfirst($type);
@@ -29,5 +31,24 @@ class ResourceIdentifier implements \JsonSerializable
     public function getType(): string
     {
         return $this->type;
+    }
+
+    /**
+     * @return ElementInterface|null
+     * @throws \Exception
+     */
+    public function getDataObject(): ?ElementInterface
+    {
+        $class = "\\Pimcore\\Model\\DataObject\\{$this->getType()}";
+
+        if ($this->getIdentifier() === null) {
+            return new $class();
+        }
+
+        if (!class_exists($class)) {
+            throw new \Exception("{$class} is not a valid data object!");
+        }
+
+        return $class::getById($this->getIdentifier());
     }
 }

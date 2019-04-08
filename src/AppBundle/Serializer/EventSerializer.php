@@ -3,7 +3,9 @@ namespace AppBundle\Serializer;
 
 use AppBundle\JsonAPI\ResourceIdentifier;
 use AppBundle\JsonAPI\SingleResource;
+use Carbon\Carbon;
 use Pimcore\Model\Asset;
+use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\Event;
 use Pimcore\Model\DataObject\EventCategory;
 
@@ -86,5 +88,24 @@ class EventSerializer extends AbstractSerializer
         }
 
         return $resource;
+    }
+
+
+    public function unserializeResource(array $data, SingleResource $resource) {
+        $price = null;
+        try {
+            $currency = DataObject\QuantityValue\Unit::getByAbbreviation($data['attributes']['price']['unit']);
+            $price = new DataObject\Data\QuantityValue($data['attributes']['price']['value'], $currency->getId());
+        } catch (\Exception $e) {
+            throw new NotSerializableException('event.errors.update_unknown_currency');
+        }
+
+        $resource->setAttributes([
+            'name' => $data['attributes']['name'],
+            'description' => $data['attributes']['description'],
+            'price' => $price,
+            'from' => Carbon::parse($data['attributes']['data']['from']),
+            'to' => Carbon::parse($data['attributes']['data']['to'])
+        ]);
     }
 }
