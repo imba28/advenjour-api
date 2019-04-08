@@ -20,10 +20,6 @@ services:
         public: true
         tags: ['controller.service_arguments']
 
-    AppBundle\EventListener\CorsHeaderEventListener:
-        tags:
-            - { name: kernel.event_listener, event: kernel.response }
-
     AppBundle\EventListener\KernelExceptionListener:
         tags:
             - { name:kernel.event_listener, event: kernel.exception }
