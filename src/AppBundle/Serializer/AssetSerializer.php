@@ -4,6 +4,7 @@ namespace AppBundle\Serializer;
 use AppBundle\JsonAPI\ResourceIdentifier;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Asset\Image;
+use Pimcore\Model\Asset\Video;
 use Pimcore\Model\DataObject\Data\Hotspotimage;
 use Pimcore\Tool;
 
@@ -17,7 +18,7 @@ class AssetSerializer extends AbstractPimcoreModelSerializer
 
     public function supports(string $className): bool
     {
-        return $className === Asset::class || $className === Hotspotimage::class;
+        return $className === Asset::class || $className === Hotspotimage::class || $className === Image::class || $className === Video::class;
     }
 
     public function serializeResource($object): ResourceIdentifier

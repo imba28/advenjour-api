@@ -1,7 +1,6 @@
 <?php
 namespace AppBundle\Controller;
 
-use AppBundle\JsonAPI\Document;
 use AppBundle\Serializer\EventCategorySerializer;
 use Pimcore\Model\DataObject\EventCategory;
 use Symfony\Component\HttpFoundation\Request;
