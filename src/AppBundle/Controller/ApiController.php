@@ -9,7 +9,6 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use Symfony\Component\HttpKernel\Exception\HttpException;
-use Symfony\Component\Routing\Annotation\Route;
 
 class ApiController extends FrontendController
 {
@@ -60,15 +59,6 @@ class ApiController extends FrontendController
         }
 
         return $this->json($document, $httpStatus);
-    }
-
-    /**
-     * @todo Das geht irgendwie auch schöner...
-     * @Route("/{path}", methods={"OPTIONS"}, requirements={"path"=".+"})
-     */
-    public function optionsCorsAcceptAction()
-    {
-        return new Response(null, 200);
     }
 
     /**
