@@ -3,7 +3,6 @@ namespace AppBundle\Controller;
 
 use AppBundle\Serializer\SerializerFactory;
 use Pimcore\Model\DataObject\Config;
-use Pimcore\Model\DataObject\ConfigLandingpage;
 use Swagger\Annotations as SWG;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;

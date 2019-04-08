@@ -3,7 +3,7 @@ namespace AppBundle\Controller;
 
 use AppBundle\Serializer\SerializerFactory;
 use Pimcore\Model\Asset;
-use Pimcore\Model\Asset\Video;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
@@ -29,13 +29,13 @@ class AssetController extends ApiController
      *     type="integer",
      *     description="The unqiue id of an existing asset object."
      * ),
-     * @SWG\Tag(name="Video")
+     * @SWG\Tag(name="Asset")
      * @SWG\Response(response=200, description="The requested objects")
      * @SWG\Response(response=404, description="Asset was not found")
      *
      * @param Request $request
      *
-     * @return \Symfony\Component\HttpFoundation\JsonResponse
+     * @return JsonResponse
      * @throws \Exception
      */
     public function videoAction(Request $request)
