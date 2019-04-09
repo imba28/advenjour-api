@@ -23,14 +23,14 @@ class QuestController extends ApiController
     /**
      * Get list of quests.
      *
-     * @Route("/quests.json", methods={"GET"})
+     * @Route("/public/quests.json", methods={"GET"})
      * @Route("/users/{id}/quests.json", methods={"GET"}, requirements={"id"="\d+"})
      *
      * @SWG\Parameter(
      *     name="orderBy",
      *     in="query",
      *     type="string",
-     *     description="The field used to order quests. All returned resource parameters are valid (name, description, ...)."
+     *     description="The field used to order categories. All returned resource parameters are valid (name, parentCategory, ...)."
      * )
      * @SWG\Parameter(
      *     name="order",
@@ -41,10 +41,19 @@ class QuestController extends ApiController
      * @SWG\Parameter(
      *     name="include",
      *     in="query",
-     *     description="If you wish to include specific relationships you can list them here (include[]=items)",
+     *     description="If you wish to include specific relationships you can list them here (include[]=images)",
      *     type="array",
-     *     @SWG\Items(type="string", enum={"events", "user", "images"}),
-     * )
+     *     @SWG\Items(type="string"),
+     * ),
+     * @SWG\Parameter(
+     *     name="filter",
+     *     in="query",
+     *     description="Add filters. (filter[name]=foobar or filter[price]=<::5&filter[name]=like::york)",
+     *     type="array",
+     *     @SWG\Items(
+     *      type="string"
+     *     ),
+     * ),
      *
      * @SWG\Tag(name="Quest")
      * @SWG\Response(
@@ -69,6 +78,10 @@ class QuestController extends ApiController
 
         if ($id = $request->get('id')) {
             $list->addConditionParam('user__id = ?', $id);
+        }
+
+        if ($filter = $request->get('filter')) {
+            $this->filterCollectionByRequest($list, $filter);
         }
 
         return $this->success($this->factory->build(Quest::class)->serializeResourceArray($list->load()));

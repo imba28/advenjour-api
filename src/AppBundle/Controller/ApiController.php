@@ -5,6 +5,7 @@ use AppBundle\JsonAPI\Document;
 use AppBundle\JsonAPI\ErrorObject;
 use AppBundle\JsonAPI\ResourceIdentifier;
 use Pimcore\Controller\FrontendController;
+use Pimcore\Model\Listing\AbstractListing;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
@@ -70,5 +71,54 @@ class ApiController extends FrontendController
     protected function escapePropertyString(string $string): string
     {
         return preg_replace('/[^\w\_\d]+/', '', $string);
+    }
+
+    /**
+     * Add condition to list object based on filter. Filter must be set in the query string.
+     *
+     * Examples:
+     * filter[name]=foobar&filter[age]=<::5 => name = 'foobar' && age < 5
+     * filter[name]=like::foobar => name LIKE '%foobar%'
+     * filter[hidden]=<>::1 => hidden != 1
+     *
+     * @param AbstractListing $list
+     * @param array $filters
+     */
+    protected function filterCollectionByRequest(AbstractListing $list, array $filters)
+    {
+        foreach ($filters as $property => $filter) {
+            $column =  $this->escapePropertyString($property);
+
+            if (preg_match('/^(?<type>[\w]+|\<|\>|\=|\<\>)\:\:/', $filter, $m)) {
+                $filterValue = str_replace($m[0], '', $filter);
+
+                switch ($m['type']) {
+                    case 'like':
+                        $list->addConditionParam("LOWER({$column}) LIKE ?", "%{$filterValue}%");
+                        break;
+
+                    case '=':
+                        $list->addConditionParam("{$column} = ?", $filterValue);
+                        break;
+
+                    case '<':
+                        $list->addConditionParam("{$column} < ?", $filterValue);
+                        break;
+
+                    case '>':
+                        $list->addConditionParam("{$column} > ?", $filterValue);
+                        break;
+
+                    case '<>':
+                        $list->addConditionParam("{$column} <> ?", $filterValue);
+                        break;
+
+                    default:
+                        // todo handle error?
+                }
+            } else {
+                $list->addConditionParam("{$column} = ?", $filter);
+            }
+        }
     }
 }

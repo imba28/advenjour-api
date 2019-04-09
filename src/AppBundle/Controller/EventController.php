@@ -80,6 +80,10 @@ class EventController extends ApiController
             $list->setCondition('FIND_IN_SET(?, categories)', [$categoryId]);
         }
 
+        if ($filter = $request->get('filter')) {
+            $this->filterCollectionByRequest($list, $filter);
+        }
+
         return $this->success($this->factory->build(Event::class)->serializeResourceArray($list->load()));
     }
 
@@ -128,6 +132,35 @@ class EventController extends ApiController
      * @param SerializerFactory $factory
      * @return \Symfony\Component\HttpFoundation\JsonResponse
      * @throws \Exception
+     *
+     * @SWG\Parameter(
+     *     name="orderBy",
+     *     in="query",
+     *     type="string",
+     *     description="The field used to order categories. All returned resource parameters are valid (name, parentCategory, ...)."
+     * )
+     * @SWG\Parameter(
+     *     name="order",
+     *     in="query",
+     *     type="string",
+     *     description="Sort results ascending or descending order. Possible values are DESC and ASC"
+     * )
+     * @SWG\Parameter(
+     *     name="include",
+     *     in="query",
+     *     description="If you wish to include specific relationships you can list them here (include[]=images)",
+     *     type="array",
+     *     @SWG\Items(type="string"),
+     * ),
+     * @SWG\Parameter(
+     *     name="filter",
+     *     in="query",
+     *     description="Add filters. (filter[name]=foobar or filter[price]=<::5&filter[name]=like::york)",
+     *     type="array",
+     *     @SWG\Items(
+     *      type="string"
+     *     ),
+     * ),
      *
      * @SWG\Response(response=201, description="User successfuly created")
      * @SWG\Response(response=422, description="Validation error. Check submitted json for errors.")

@@ -2,7 +2,9 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Serializer\EventCategorySerializer;
+use Exception;
 use Pimcore\Model\DataObject\EventCategory;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
@@ -42,12 +44,21 @@ class CategoryController extends ApiController
      *     type="array",
      *     @SWG\Items(type="string"),
      * ),
+     * @SWG\Parameter(
+     *     name="filter",
+     *     in="query",
+     *     description="Add filters. (filter[name]=foobar or filter[price]=<::5&filter[name]=like::york)",
+     *     type="array",
+     *     @SWG\Items(
+     *      type="string"
+     *     ),
+     * ),
      * @SWG\Tag(name="EventCategory")
      * @SWG\Response(response=200, description="List of requested objects")
      *
      * @param Request $request
-     * @return \Symfony\Component\HttpFoundation\JsonResponse
-     * @throws \Exception
+     * @return JsonResponse
+     * @throws Exception
      */
     public function listAction(Request $request)
     {
@@ -63,6 +74,10 @@ class CategoryController extends ApiController
             $list->setCondition('parentCategory__id = ?', [$parentCategory]);
         } else {
             $list->setCondition('parentCategory__id IS NULL');
+        }
+
+        if ($filter = $request->get('filter')) {
+            $this->filterCollectionByRequest($list, $filter);
         }
 
         return $this->success($this->serializer->serializeResourceArray($list->load()));
@@ -90,8 +105,8 @@ class CategoryController extends ApiController
      * @SWG\Response(response=200, description="The requested objects")
      *
      * @param Request $request
-     * @return \Symfony\Component\HttpFoundation\JsonResponse
-     * @throws \Exception
+     * @return JsonResponse
+     * @throws Exception
      */
     public function detailAction(Request $request)
     {
