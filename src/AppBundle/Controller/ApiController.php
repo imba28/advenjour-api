@@ -29,7 +29,8 @@ class ApiController extends FrontendController
     /**
      * @param array|ResourceIdentifier $data
      * @param int $httpStatus
-     * @return \Symfony\Component\HttpFoundation\JsonResponse
+     * @param array|null $metadata
+     * @return JsonResponse
      */
     public function success($data, $httpStatus = 200, array $metadata = null)
     {
@@ -45,7 +46,7 @@ class ApiController extends FrontendController
     /**
      * @param string|array $errors
      * @param int $httpStatus
-     * @return \Symfony\Component\HttpFoundation\JsonResponse
+     * @return JsonResponse
      */
     public function error($errors, int $httpStatus = Response::HTTP_INTERNAL_SERVER_ERROR): JsonResponse
     {
@@ -120,5 +121,10 @@ class ApiController extends FrontendController
                 $list->addConditionParam("{$column} = ?", $filter);
             }
         }
+    }
+
+    protected function selectCollectionBoundsByRequest(AbstractListing $list, $limit, $offset = 0) {
+        $list->setLimit($limit);
+        $list->setOffset($offset);
     }
 }

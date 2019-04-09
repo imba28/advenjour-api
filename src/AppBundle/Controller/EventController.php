@@ -6,6 +6,7 @@ use AppBundle\Serializer\SerializerFactory;
 use AppBundle\Service\ResourceUpdateService;
 use Pimcore\Model\DataObject\Event;
 use Respect\Validation\Exceptions\ValidationException;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\HttpException;
@@ -51,19 +52,31 @@ class EventController extends ApiController
      *     name="order",
      *     in="query",
      *     type="string",
-     *     description="Sort results ascending or descending order. Possible values are DESC and ASC"
+     *     description="Sort results ascending or descending order. Possible values are DESC and ASC."
      * )
      * @SWG\Parameter(
      *     name="include",
      *     in="query",
-     *     description="If you wish to include specific relationships you can list them here (include[]=images)",
+     *     description="If you wish to include specific relationships you can list them here (include[]=images).",
      *     type="array",
      *     @SWG\Items(type="string"),
+     * )
+     * @SWG\Parameter(
+     *     name="limit",
+     *     in="query",
+     *     type="integer",
+     *     description="Set result limit. Default value is 25."
+     * )
+     * @SWG\Parameter(
+     *     name="offset",
+     *     in="query",
+     *     type="integer",
+     *     description="Set result offset. Use this in combination with limit to create a pagination."
      * )
      * @SWG\Response(response=200, description="List of requested objects")
      *
      * @param Request $request
-     * @return \Symfony\Component\HttpFoundation\JsonResponse
+     * @return JsonResponse
      * @throws \Exception
      */
     public function listAction(Request $request)
@@ -84,7 +97,22 @@ class EventController extends ApiController
             $this->filterCollectionByRequest($list, $filter);
         }
 
-        return $this->success($this->factory->build(Event::class)->serializeResourceArray($list->load()));
+        $limit = intval($request->get('limit', 25));
+        $offset = intval($request->get('offset', 0));
+        $this->selectCollectionBoundsByRequest(
+            $list,
+            $limit,
+            $offset
+        );
+
+        $resource = $this->factory->build(Event::class)->serializeResourceArray($list->load());
+
+        return $this->success($resource, Response::HTTP_OK, [
+            'limit' => $limit,
+            'offset' => $offset,
+            'countTotal' => $list->count(),
+            'countResult' => count($list->load())
+        ]);
     }
 
     /**
@@ -110,7 +138,7 @@ class EventController extends ApiController
      * @SWG\Response(response=404, description="Event not found.")
      *
      * @param Request $request
-     * @return \Symfony\Component\HttpFoundation\JsonResponse
+     * @return JsonResponse
      * @throws \Exception
      */
     public function detailAction(Request $request)
@@ -130,7 +158,7 @@ class EventController extends ApiController
      *
      * @param ResourceUpdateService $updateService
      * @param SerializerFactory $factory
-     * @return \Symfony\Component\HttpFoundation\JsonResponse
+     * @return JsonResponse
      * @throws \Exception
      *
      * @SWG\Parameter(
@@ -217,7 +245,7 @@ class EventController extends ApiController
      * @SWG\Response(response=200, description="Event successfully deleted.")
      * @SWG\Response(response=403, description="Authorization error. User must be owner of object.")
      * @SWG\Response(response=404, description="Event not found.")
-     * @return \Symfony\Component\HttpFoundation\JsonResponse
+     * @return JsonResponse
      * @throws \Exception
      */
     public function deleteAction(Request $request)
@@ -243,7 +271,7 @@ class EventController extends ApiController
      *
      * @param ResourceUpdateService $updateService
      * @param SerializerFactory $factory
-     * @return \Symfony\Component\HttpFoundation\JsonResponse
+     * @return JsonResponse
      * @throws \Exception
      *
      * @SWG\Response(response=200, description="Event successfully updated.")

@@ -5,6 +5,7 @@ use AppBundle\Serializer\SerializerFactory;
 use Pimcore\Model\DataObject\Quest;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Swagger\Annotations as SWG;
 
@@ -23,7 +24,7 @@ class QuestController extends ApiController
     /**
      * Get list of quests.
      *
-     * @Route("/public/quests.json", methods={"GET"})
+     * @Route("/quests.json", methods={"GET"})
      * @Route("/users/{id}/quests.json", methods={"GET"}, requirements={"id"="\d+"})
      *
      * @SWG\Parameter(
@@ -44,7 +45,7 @@ class QuestController extends ApiController
      *     description="If you wish to include specific relationships you can list them here (include[]=images)",
      *     type="array",
      *     @SWG\Items(type="string"),
-     * ),
+     * )
      * @SWG\Parameter(
      *     name="filter",
      *     in="query",
@@ -53,7 +54,19 @@ class QuestController extends ApiController
      *     @SWG\Items(
      *      type="string"
      *     ),
-     * ),
+     * )
+     * @SWG\Parameter(
+     *     name="limit",
+     *     in="query",
+     *     type="integer",
+     *     description="Set result limit. Default value is 25."
+     * )
+     * @SWG\Parameter(
+     *     name="offset",
+     *     in="query",
+     *     type="integer",
+     *     description="Set result offset. Use this in combination with limit to create a pagination."
+     * )
      *
      * @SWG\Tag(name="Quest")
      * @SWG\Response(
@@ -84,6 +97,22 @@ class QuestController extends ApiController
             $this->filterCollectionByRequest($list, $filter);
         }
 
-        return $this->success($this->factory->build(Quest::class)->serializeResourceArray($list->load()));
+        $limit = intval($request->get('limit', 25));
+        $offset = intval($request->get('offset', 0));
+        $this->selectCollectionBoundsByRequest(
+            $list,
+            $limit,
+            $offset
+        );
+
+        return $this->success(
+            $this->factory->build(Quest::class)->serializeResourceArray($list->load()),
+            Response::HTTP_OK, [
+                'limit' => $limit,
+                'offset' => $offset,
+                'countTotal' => $list->count(),
+                'countResult' => count($list->load())
+            ]
+        );
     }
 }

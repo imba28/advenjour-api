@@ -6,6 +6,7 @@ use Exception;
 use Pimcore\Model\DataObject\EventCategory;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Swagger\Annotations as SWG;
@@ -53,6 +54,19 @@ class CategoryController extends ApiController
      *      type="string"
      *     ),
      * ),
+     * @SWG\Parameter(
+     *     name="limit",
+     *     in="query",
+     *     type="integer",
+     *     description="Set result limit. Default value is 25."
+     * ),
+     * @SWG\Parameter(
+     *     name="offset",
+     *     in="query",
+     *     type="integer",
+     *     description="Set result offset. Use this in combination with limit to create a pagination."
+     * )
+     *
      * @SWG\Tag(name="EventCategory")
      * @SWG\Response(response=200, description="List of requested objects")
      *
@@ -80,7 +94,23 @@ class CategoryController extends ApiController
             $this->filterCollectionByRequest($list, $filter);
         }
 
-        return $this->success($this->serializer->serializeResourceArray($list->load()));
+        $limit = intval($request->get('limit', 25));
+        $offset = intval($request->get('offset', 0));
+        $this->selectCollectionBoundsByRequest(
+            $list,
+            $limit,
+            $offset
+        );
+
+        return $this->success(
+            $this->serializer->serializeResourceArray($list->load()),
+            Response::HTTP_OK, [
+                'limit' => $limit,
+                'offset' => $offset,
+                'countTotal' => $list->count(),
+                'countResult' => count($list->load())
+            ]
+        );
     }
 
     /**
