@@ -3,10 +3,10 @@ namespace AppBundle\Controller;
 
 use AppBundle\Serializer\SerializerFactory;
 use Pimcore\Model\DataObject\Quest;
-use Swagger\Annotations as SWG;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
+use Swagger\Annotations as SWG;
 
 class QuestController extends ApiController
 {
@@ -47,7 +47,11 @@ class QuestController extends ApiController
      * )
      *
      * @SWG\Tag(name="Quest")
-     * @SWG\Response(response=200, description="Returns list of quest objects.")
+     * @SWG\Response(
+     *     response=200,
+     *     description="Returns list of quest objects."
+     * )
+     *
      * @param Request $request
      * @return JsonResponse
      * @throws \Exception

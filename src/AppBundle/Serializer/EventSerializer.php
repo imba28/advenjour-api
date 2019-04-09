@@ -72,17 +72,17 @@ class EventSerializer extends AbstractSerializer
         }
 
         if (count($object->getCategories()) > 0) {
-            $eventSerializer = $this->getSerializer(EventCategory::class);
+            $categorySerializer = $this->getSerializer(EventCategory::class);
 
             $resource->addRelationship(
                 'categories',
-                $eventSerializer->serializeResourceIdentifierArray($object->getCategories())
+                $categorySerializer->serializeResourceIdentifierArray($object->getCategories())
             );
 
             if ($this->includeFullResource('categories')) {
                 $resource->addInclude(
                     'categories',
-                    $eventSerializer->serializeResourceArray($object->getCategories())
+                    $categorySerializer->serializeResourceArray($object->getCategories())
                 );
             }
         }
