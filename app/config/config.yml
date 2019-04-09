@@ -10,7 +10,7 @@ nelmio_api_doc:
             - ^/api(?!/doc$)
     documentation:
         host: advenjour.ddns.net
-        schemes: [http, https]
+        schemes: [https]
         info:
             title: Advenjour API Doc
             description: bisl grün, bisl blau
