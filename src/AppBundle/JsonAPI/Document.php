@@ -53,6 +53,7 @@ class Document implements \JsonSerializable
                 }
             } else { // single document
                 $data = $this->data;
+                $includes = $this->data->getIncludes();
             }
 
             return [
