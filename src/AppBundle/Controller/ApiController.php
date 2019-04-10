@@ -114,6 +114,23 @@ class ApiController extends FrontendController
                         $list->addConditionParam("{$column} <> ?", $filterValue);
                         break;
 
+                    case 'in':
+                    case 'inDiff':
+                        $filterValue = explode(',', $filterValue);
+
+                        $condition = [];
+                        $bindings = [];
+
+                        $concatenator = $m['type'] === 'inDiff' ? 'AND' : 'OR';
+
+                        foreach ($filterValue as $value) {
+                            $condition[] = "FIND_IN_SET(?, {$column})";
+                            $bindings[] = $value;
+                        }
+
+                        $list->addConditionParam(join(" {$concatenator} ", $condition), $bindings);
+                        break;
+
                     default:
                         // todo handle error?
                 }
