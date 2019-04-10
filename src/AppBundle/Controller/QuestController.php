@@ -6,6 +6,7 @@ use Pimcore\Model\DataObject\Quest;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Swagger\Annotations as SWG;
 
@@ -114,5 +115,42 @@ class QuestController extends ApiController
                 'countResult' => count($list->load())
             ]
         );
+    }
+
+    /**
+     * Event single resource object.
+     *
+     * @Route("/quest/{id}.json", methods={"GET"})
+     *
+     * @SWG\Parameter(
+     *     name="id",
+     *     in="path",
+     *     type="integer",
+     *     description="The unqiue id of an existing quest object."
+     * )
+     * @SWG\Parameter(
+     *     name="include",
+     *     in="query",
+     *     description="If you wish to include specific relationships you can list them here (include[]=images)",
+     *     type="array",
+     *     @SWG\Items(type="string"),
+     * )
+     *
+     * @SWG\Response(response=200, description="The requested objects")
+     * @SWG\Response(response=404, description="Quest not found.")
+     *
+     * @SWG\Tag(name="Quest")
+     *
+     * @param Request $request
+     * @return JsonResponse
+     * @throws \Exception
+     */
+    public function detailAction(Request $request)
+    {
+        if ($event = Quest::getById($request->get('id'))) {
+            return $this->success($this->factory->build(Quest::class)->serializeResource($event));
+        }
+
+        throw new NotFoundHttpException('Item not found!');
     }
 }
