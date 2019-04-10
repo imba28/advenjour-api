@@ -3,6 +3,7 @@ namespace AppBundle\Controller;
 
 use AppBundle\Serializer\EventCategorySerializer;
 use Exception;
+use Nelmio\ApiDocBundle\Annotation\Model;
 use Pimcore\Model\DataObject\EventCategory;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -132,7 +133,11 @@ class CategoryController extends ApiController
      *     @SWG\Items(type="string"),
      * ),
      * @SWG\Tag(name="EventCategory")
-     * @SWG\Response(response=200, description="The requested objects")
+     * @SWG\Response(
+     *     response=200,
+     *     description="The requested objects",
+     *     @Model(type=AppBundle\JsonAPI\Schemas\EventCategory::class)
+     * )
      *
      * @param Request $request
      * @return JsonResponse

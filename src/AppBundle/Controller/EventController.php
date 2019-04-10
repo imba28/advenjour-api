@@ -4,6 +4,7 @@ namespace AppBundle\Controller;
 use AppBundle\Serializer\NotSerializableException;
 use AppBundle\Serializer\SerializerFactory;
 use AppBundle\Service\ResourceUpdateService;
+use Nelmio\ApiDocBundle\Annotation\Model;
 use Pimcore\Model\DataObject\Event;
 use Respect\Validation\Exceptions\ValidationException;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -134,7 +135,11 @@ class EventController extends ApiController
      *     @SWG\Items(type="string"),
      * )
      *
-     * @SWG\Response(response=200, description="The requested objects")
+     * @SWG\Response(
+     *     response=200,
+     *     description="The requested objects",
+     *     @Model(type=AppBundle\JsonAPI\Schemas\Event::class)
+     * )
      * @SWG\Response(response=404, description="Event not found.")
      *
      * @param Request $request

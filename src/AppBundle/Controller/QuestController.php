@@ -9,6 +9,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Swagger\Annotations as SWG;
+use Nelmio\ApiDocBundle\Annotation\Model;
 
 class QuestController extends ApiController
 {
@@ -136,7 +137,11 @@ class QuestController extends ApiController
      *     @SWG\Items(type="string"),
      * )
      *
-     * @SWG\Response(response=200, description="The requested objects")
+     * @SWG\Response(
+     *     response=200,
+     *     description="The requested objects",
+     *     @Model(type=AppBundle\JsonAPI\Schemas\Quest::class)
+     * )
      * @SWG\Response(response=404, description="Quest not found.")
      *
      * @SWG\Tag(name="Quest")

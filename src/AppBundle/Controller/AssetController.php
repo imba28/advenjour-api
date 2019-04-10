@@ -2,6 +2,7 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Serializer\SerializerFactory;
+use Nelmio\ApiDocBundle\Annotation\Model;
 use Pimcore\Model\Asset;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -30,7 +31,11 @@ class AssetController extends ApiController
      *     description="The unqiue id of an existing asset object."
      * ),
      * @SWG\Tag(name="Asset")
-     * @SWG\Response(response=200, description="The requested objects")
+     * @SWG\Response(
+     *     response=200,
+     *     description="The requested objects",
+     *     @Model(type=AppBundle\JsonAPI\Schemas\Asset::class)
+     * )
      * @SWG\Response(response=404, description="Asset was not found")
      *
      * @param Request $request
@@ -38,7 +43,7 @@ class AssetController extends ApiController
      * @return JsonResponse
      * @throws \Exception
      */
-    public function videoAction(Request $request)
+    public function detailAction(Request $request)
     {
         if ($asset = Asset::getById($request->get('id'))) {
             $serializer = $this->factory->build($asset);
