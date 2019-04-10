@@ -96,11 +96,14 @@ class EventSerializer extends AbstractSerializer
 
     public function unserializeResource(array $data, SingleResource $resource) {
         $price = null;
-        try {
-            $currency = DataObject\QuantityValue\Unit::getByAbbreviation($data['attributes']['price']['unit']);
-            $price = new DataObject\Data\QuantityValue($data['attributes']['price']['value'], $currency->getId());
-        } catch (\Exception $e) {
-            throw new NotSerializableException('event.errors.update_unknown_currency');
+
+        if (isset($data['attributes']['price'])) {
+            try {
+                $currency = DataObject\QuantityValue\Unit::getByAbbreviation($data['attributes']['price']['unit']);
+                $price = new DataObject\Data\QuantityValue($data['attributes']['price']['value'], $currency->getId());
+            } catch (\Exception $e) {
+                throw new NotSerializableException('event.errors.update_unknown_currency');
+            }
         }
 
         $resource->setAttributes([
