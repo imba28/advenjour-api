@@ -214,7 +214,7 @@ class EventController extends ApiController
         $event->setUser($this->getUser());
 
         if (!$this->getUser()) {
-            throw new HttpException(Response::HTTP_UNAUTHORIZED, $this->get('translator')->trans('event.errors.delete_unauthorized'));
+            throw new HttpException(Response::HTTP_UNAUTHORIZED, $this->get('translator')->trans('event.errors.unauthorized'));
         }
 
         try {
