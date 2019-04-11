@@ -67,7 +67,11 @@ class SingleResource extends ResourceIdentifier
         }
 
         foreach ($this->includes as $include) {
-            $includes = array_merge($includes, array_values($include));
+            if (is_array($include)) {
+                $includes = array_merge($includes, array_values($include));
+            } else {
+                $includes[] = $include;
+            }
         }
 
         return $includes;
