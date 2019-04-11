@@ -1,11 +1,11 @@
 <?php 
 
 /** 
-* Generated at: 2019-01-31T09:39:33+01:00
+* Generated at: 2019-04-11T09:59:33+02:00
 * Inheritance: no
 * Variants: no
 * Changed by: admin (2)
-* IP: 127.0.0.1
+* IP: ::1
 
 
 Fields Summary: 
@@ -19,6 +19,7 @@ Fields Summary:
 - locations [advancedManyToManyRelation]
 - categories [manyToManyObjectRelation]
 - user [manyToOneRelation]
+- rating [slider]
 */ 
 
 
@@ -27,13 +28,17 @@ return Pimcore\Model\DataObject\ClassDefinition::__set_state(array(
    'name' => 'Event',
    'description' => '',
    'creationDate' => 0,
-   'modificationDate' => 1548923972,
+   'modificationDate' => 1554969573,
    'userOwner' => 2,
    'userModification' => 2,
    'parentClass' => '',
    'listingParentClass' => '',
    'useTraits' => '',
    'listingUseTraits' => '',
+   'encryption' => false,
+   'encryptedTables' => 
+  array (
+  ),
    'allowInherit' => false,
    'allowVariants' => NULL,
    'showVariants' => false,
@@ -130,6 +135,7 @@ return Pimcore\Model\DataObject\ClassDefinition::__set_state(array(
                      'columnType' => 'longtext',
                      'phpdocType' => 'string',
                      'toolbarConfig' => '',
+                     'excludeFromSearchIndex' => false,
                      'name' => 'description',
                      'title' => 'Beschreibung',
                      'tooltip' => '',
@@ -447,10 +453,38 @@ return Pimcore\Model\DataObject\ClassDefinition::__set_state(array(
                  'mandatory' => false,
                  'noteditable' => true,
                  'index' => false,
+                 'locked' => false,
+                 'style' => '',
+                 'permissions' => NULL,
+                 'datatype' => 'data',
+                 'invisible' => false,
+                 'visibleGridView' => false,
+                 'visibleSearch' => false,
+              )),
+              6 => 
+              Pimcore\Model\DataObject\ClassDefinition\Data\Slider::__set_state(array(
+                 'fieldtype' => 'slider',
+                 'width' => '',
+                 'height' => '',
+                 'minValue' => 0.0,
+                 'maxValue' => 5.0,
+                 'vertical' => false,
+                 'increment' => 1.0,
+                 'decimalPrecision' => 0,
+                 'queryColumnType' => 'double',
+                 'columnType' => 'double',
+                 'phpdocType' => 'float',
+                 'name' => 'rating',
+                 'title' => 'Bewertung (fake)',
+                 'tooltip' => '',
+                 'mandatory' => false,
+                 'noteditable' => false,
+                 'index' => false,
                  'locked' => NULL,
                  'style' => '',
                  'permissions' => NULL,
                  'datatype' => 'data',
+                 'relationType' => false,
                  'invisible' => false,
                  'visibleGridView' => false,
                  'visibleSearch' => false,

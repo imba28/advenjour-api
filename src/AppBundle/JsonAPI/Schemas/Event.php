@@ -36,4 +36,14 @@ class Event
      * )
      */
     public $price;
+
+    /**
+     * @SWG\Property(
+     *     type="integer",
+     *     minimum="0",
+     *     maximum="5"
+     * )
+     */
+    public $rating;
+
 }

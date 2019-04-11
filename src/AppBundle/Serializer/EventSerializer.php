@@ -54,7 +54,8 @@ class EventSerializer extends AbstractSerializer
             'date' => [
                 'from' => $object->getFrom(),
                 'to' => $object->getTo()
-            ]
+            ],
+            'rating' => $object->getRating()
         ]);
 
         if ($object->getImages() && count($object->getImages()->getItems()) > 0) {
@@ -111,7 +112,8 @@ class EventSerializer extends AbstractSerializer
             'description' => $data['attributes']['description'],
             'price' => $price,
             'from' => Carbon::parse($data['attributes']['data']['from']),
-            'to' => Carbon::parse($data['attributes']['data']['to'])
+            'to' => Carbon::parse($data['attributes']['data']['to']),
+            'rating' => intval($data['attributes']['rating'])
         ]);
     }
 }
