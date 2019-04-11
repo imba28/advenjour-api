@@ -20,7 +20,8 @@ class ErrorObject implements \JsonSerializable
 
         return [
             'status' => $status,
-            'title' => $title
+            'title' => $title,
+            'info' => \Pimcore::inDebugMode() ? $this->exception->getTraceAsString() : null
         ];
     }
 }

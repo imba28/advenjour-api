@@ -14,7 +14,6 @@ class ResourceUpdateService
      * @param DataObject $object
      * @param SingleResource $resource
      * @throws \Exception
-     * @todo Service needs to know about structure of the data array and is therefore tightly coupled to controller. This is bad, because when changing the api body signature we have to edit two files.
      */
     public function update(DataObject $object, SingleResource $resource)
     {
@@ -47,6 +46,6 @@ class ResourceUpdateService
             }
         }
 
-        $object->save();
+         $object->save();
     }
 }

@@ -3,7 +3,6 @@ namespace AppBundle\Serializer;
 
 use AppBundle\JsonAPI\ResourceIdentifier;
 use AppBundle\JsonAPI\SingleResource;
-use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\TokenManager\Single;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 abstract class AbstractSerializer implements SerializerInterface

@@ -45,6 +45,10 @@ class ResourceIdentifier implements \JsonSerializable
             return new $class();
         }
 
+        if (in_array($this->getType(), ['Video', 'Image'])) {
+            $class = "\\Pimcore\\Model\\Asset\\{$this->getType()}";
+        }
+
         if (!class_exists($class)) {
             throw new \Exception("{$class} is not a valid data object!");
         }

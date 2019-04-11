@@ -1,6 +1,7 @@
 <?php
 namespace AppBundle\Serializer;
 
+use AppBundle\JsonAPI\ResourceGalleryWrapper;
 use AppBundle\JsonAPI\ResourceIdentifier;
 use AppBundle\JsonAPI\SingleResource;
 use Carbon\Carbon;
@@ -115,5 +116,11 @@ class EventSerializer extends AbstractSerializer
             'to' => Carbon::parse($data['attributes']['data']['to']),
             'rating' => intval($data['attributes']['rating'])
         ]);
+
+        // manually add gallery wrapper class
+        if (isset($resource->getRelationships()['images'])) {
+            $images = $resource->getRelationships()['images'];
+            $resource->addRelationship('images', new ResourceGalleryWrapper($images));
+        }
     }
 }
