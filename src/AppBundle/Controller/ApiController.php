@@ -131,6 +131,10 @@ class ApiController extends FrontendController
                         $list->addConditionParam(join(" {$concatenator} ", $condition), $bindings);
                         break;
 
+                    case 'is':
+                        $list->addConditionParam("{$column}__id = ?", $filterValue);
+                        break;
+
                     default:
                         // todo handle error?
                 }
