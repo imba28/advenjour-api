@@ -62,6 +62,7 @@ class EventSerializer extends AbstractSerializer
         if ($object->getImages() && count($object->getImages()->getItems()) > 0) {
             $assetSerializer = $this->getSerializer(Asset::class);
             $assetSerializer->setThumbnails([ // todo lg: serializer should not know about concrete class implementations
+                "heroSlide",
                 "carouselImg"
             ]);
             $resource->addRelationship(
