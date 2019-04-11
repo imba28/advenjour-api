@@ -53,7 +53,10 @@ class AssetSerializer extends AbstractPimcoreModelSerializer
             }
 
             if ($object instanceof Image) {
-                $thumbnails["svgPlaceholder"] = Tool::getHostUrl() . $object->getLowQualityPreviewPath();
+                if (file_exists($object->getLowQualityPreviewFileSystemPath())) {
+                    $imageData = base64_encode(file_get_contents($object->getLowQualityPreviewFileSystemPath()));
+                    $thumbnails["svgPlaceholder"] =  "data:image/svg+xml;base64,{$imageData}";
+                }
             }
 
             $resource->addAttribute('thumbnails', $thumbnails);
