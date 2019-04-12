@@ -2,6 +2,7 @@
 namespace AppBundle\Serializer;
 
 use AppBundle\JsonAPI\ResourceIdentifier;
+use AppBundle\JsonAPI\SingleResource;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject\Event;
 use Pimcore\Model\DataObject\Quest;
@@ -72,5 +73,12 @@ class QuestSerializer extends AbstractPimcoreModelSerializer
         }
 
         return $resource;
+    }
+
+    public function unserializeResource(array $data, SingleResource $resource) {
+        $resource->setAttributes([
+            'name' => $data['attributes']['name'],
+            'description' => $data['attributes']['description'],
+        ]);
     }
 }

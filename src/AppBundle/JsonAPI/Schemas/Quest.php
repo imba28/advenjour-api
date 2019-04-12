@@ -33,4 +33,12 @@ class Quest
      * )
      */
     public $images;
+
+    /**
+     * @SWG\Property(
+     *     type="array",
+     *     @SWG\Items(type=Event::class)
+     * )
+     */
+    public $events;
 }
