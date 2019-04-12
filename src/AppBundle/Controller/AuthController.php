@@ -3,9 +3,12 @@ namespace AppBundle\Controller;
 
 use AppBundle\Model\DataObject\User;
 use AppBundle\Serializer\UserSerializer;
+use AppBundle\Service\PasswordPwnedChecker;
+use Exception;
 use Firebase\JWT\JWT;
 use Pimcore\Tool;
 use Respect\Validation\Exceptions\ValidationException;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -14,8 +17,15 @@ use Swagger\Annotations as SWG;
 
 class AuthController extends ApiController
 {
+    /**
+     * @var UserSerializer
+     */
     private $serializer;
 
+    /**
+     * AuthController constructor.
+     * @param UserSerializer $serializer
+     */
     public function __construct(UserSerializer $serializer)
     {
         $this->serializer = $serializer;
@@ -23,8 +33,9 @@ class AuthController extends ApiController
 
     /**
      * @Route("/auth/login", name="app_auth_login", methods={"POST"})
-     * @return \Symfony\Component\HttpFoundation\Response
+     * @return Response
      *
+     * @throws Exception
      * @SWG\Parameter(
      *   name="body",
      *   in="body",
@@ -69,6 +80,8 @@ class AuthController extends ApiController
      * @Route("/auth/register", methods={"PUT"})
      * @param Request $request
      *
+     * @param PasswordPwnedChecker $passwordChecker
+     * @return JsonResponse
      * @SWG\Parameter(
      *   name="body",
      *   in="body",
@@ -78,16 +91,16 @@ class AuthController extends ApiController
      *          property="username",
      *          type="string",
      *          minimum=3,
-     *          maximum=64
+     *          maximum=64,
      *       ),
      *       @SWG\Property(
      *          property="password",
-     *          minimum=6,
+     *          minimum=4,
      *          type="string",
      *       ),
      *       @SWG\Property(
      *          property="email",
-     *          type="string"
+     *          type="string",
      *       ),
      *       @SWG\Property(
      *          property="countryCode",
@@ -107,21 +120,35 @@ class AuthController extends ApiController
      *       @SWG\Property(
      *          property="lastname",
      *          type="string",
+     *       ),
+     *       @SWG\Property(
+     *          property="forcePassword",
+     *          type="boolean",
+     *          description="By default api checks for pwned password. Use this parameter to disable password lookup."
      *       )
      *    )
      * )
      * @SWG\Response(response=201, description="User successfuly created")
-     * * @SWG\Response(response=422, description="Validation error. Check submitted json for errors.")
-     * @return \Symfony\Component\HttpFoundation\JsonResponse
+     * @SWG\Response(response=422, description="Validation error. Check submitted json for errors.")
+     * @SWG\Response(response=400, description="Invalid request. Check if request body is valid json.")
      */
-    public function registerAction(Request $request)
+    public function registerAction(Request $request, PasswordPwnedChecker $passwordChecker)
     {
-        $input = json_decode($request->getContent(), true);
+        $input = $this->getRequestBodyJson($request);
+
         $validators = v::key('username', v::stringType()->length(3,64))
             ->key('password', v::stringType()->length(6, null))
-            ->key('email', v::email());
+            ->key('email', v::email())
+            ->key('password_pwned', v::callback(function($password) use ($input, $passwordChecker) {
+                if (isset($input['forcePassword'])) {
+                    return true;
+                }
+
+                return !$passwordChecker->isPwned($password);
+            }));
 
         try {
+            $input['password_pwned'] = $input['password'];
             $validators->assert($input);
 
             if (User::getByEmail($input['email'], 1)) {
@@ -141,14 +168,15 @@ class AuthController extends ApiController
                 $e->findMessages([
                     'username' => $this->get('translator')->trans('auth.register.errors.username'),
                     'email' => $this->get('translator')->trans('auth.register.errors.email'),
-                    'password' => $this->get('translator')->trans('auth.register.errors.password'),
+                    'password' => $this->get('translator')->trans('auth.register.errors.password_too_short'),
+                    'password_pwned' => $this->get('translator')->trans('auth.register.errors.password_pwned'),
                 ])
             );
 
             return $this->error($errors, Response::HTTP_UNPROCESSABLE_ENTITY);
         } catch (DuplicateUserException $e) {
             return $this->error($e->getMessage(), Response::HTTP_UNPROCESSABLE_ENTITY);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return $this->error('Model validation failed.', Response::HTTP_UNPROCESSABLE_ENTITY);
         }
     }

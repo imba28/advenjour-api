@@ -4,11 +4,15 @@ namespace AppBundle\Controller;
 use AppBundle\JsonAPI\Document;
 use AppBundle\JsonAPI\ErrorObject;
 use AppBundle\JsonAPI\ResourceIdentifier;
+use InvalidArgumentException;
 use Pimcore\Controller\FrontendController;
 use Pimcore\Model\Listing\AbstractListing;
+use stdClass;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class ApiController extends FrontendController
@@ -61,6 +65,26 @@ class ApiController extends FrontendController
         }
 
         return $this->json($document, $httpStatus);
+    }
+
+    /**
+     * Decode request body and return associative array or std object
+     * @param Request $request
+     * @param bool $assoc
+     * @return stdClass|array
+     */
+    protected function getRequestBodyJson(Request $request, bool $assoc = true)
+    {
+        if ($request->getMethod() === 'GET') {
+            throw new InvalidArgumentException('Get request does not have a body!');
+        }
+
+        $data = json_decode($request->getContent(), $assoc);
+        if ($data === null && json_last_error() !== JSON_ERROR_NONE) {
+            throw new BadRequestHttpException($this->get('translator')->trans('errors.json.invalid_body'));
+        }
+
+        return $data;
     }
 
     /**
