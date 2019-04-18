@@ -5,6 +5,7 @@ use AppBundle\JsonAPI\Document;
 use AppBundle\JsonAPI\ErrorObject;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Http\Authentication\DefaultAuthenticationFailureHandler;
@@ -25,8 +26,8 @@ class AuthenticationFailureHandler extends DefaultAuthenticationFailureHandler
     public function onAuthenticationFailure(Request $request, AuthenticationException $exception)
     {
         $document = new Document();
-        $document->addError(new ErrorObject(new HttpException(403, $this->translator->trans('auth.login.errors.invalid_credentials'))));
+        $document->addError(new ErrorObject(new HttpException(Response::HTTP_UNAUTHORIZED, $this->translator->trans('auth.login.errors.invalid_credentials'))));
 
-        return new JsonResponse($document);
+        return new JsonResponse($document, Response::HTTP_UNAUTHORIZED);
     }
 }

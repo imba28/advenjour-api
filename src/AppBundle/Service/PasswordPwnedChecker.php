@@ -11,6 +11,9 @@ class PasswordPwnedChecker
      */
     private $clientFactory;
 
+    /**
+     * @var ApplicationLogger
+     */
     private $logger;
 
     public function __construct(ClientFactory $clientFactory, ApplicationLogger $logger)
