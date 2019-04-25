@@ -26,6 +26,7 @@ class ErrorObject implements \JsonSerializable
 
         if ($this->exception instanceof HttpExceptionInterface) {
             $status = $this->exception->getStatusCode();
+            $title = $this->exception->getMessage();
         }
 
         if ($this->exception instanceof AuthenticationException) {
