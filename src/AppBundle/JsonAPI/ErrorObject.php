@@ -1,6 +1,7 @@
 <?php
 namespace AppBundle\JsonAPI;
 
+use Pimcore;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
