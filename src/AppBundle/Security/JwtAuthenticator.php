@@ -4,10 +4,12 @@ namespace AppBundle\Security;
 use AppBundle\JsonAPI\Document;
 use AppBundle\JsonAPI\ErrorObject;
 use Firebase\JWT\JWT;
+use Pimcore\Tool;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\HttpException;
+use Symfony\Component\Security\Core\Exception\AuthenticationExpiredException;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Guard\AbstractGuardAuthenticator;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
@@ -21,6 +23,11 @@ use Symfony\Component\Translation\TranslatorInterface;
  */
 class JwtAuthenticator extends AbstractGuardAuthenticator
 {
+    /**
+     * Time in seconds a token is valid.
+     */
+    const JWT_TOKEN_TTL = 3600;
+
     /**
      * @var string
      */
@@ -107,7 +114,15 @@ class JwtAuthenticator extends AbstractGuardAuthenticator
         $payload = $this->getPayload($credentials['token']);
 
         if ($payload->email !== $user->getEmail()) {
-            return false;
+            throw new AuthenticationException('Invalid paload.');
+        }
+
+        if ($payload->iat <= time() - self::JWT_TOKEN_TTL) {
+            throw new AuthenticationExpiredException('authentication expired');
+        }
+
+        if ($payload->ip !== Tool::getClientIp()) {
+            throw new AuthenticationException('authentication expired');
         }
 
         return true;

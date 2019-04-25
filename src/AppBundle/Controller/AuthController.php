@@ -67,6 +67,7 @@ class AuthController extends ApiController
                 'iat' => time(),
                 'sub' => 'user',
                 'uid' => $user->getId(),
+                'ip' => Tool::getClientIp(),
                 'email' => $user->getEmail()
             ];
 

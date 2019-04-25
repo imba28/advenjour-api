@@ -3,6 +3,7 @@ namespace AppBundle\JsonAPI;
 
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
+use Symfony\Component\Security\Core\Exception\AuthenticationException;
 
 class ErrorObject implements \JsonSerializable
 {
@@ -15,13 +16,24 @@ class ErrorObject implements \JsonSerializable
 
     public function jsonSerialize()
     {
-        $status = $this->exception instanceof HttpExceptionInterface ? $this->exception->getStatusCode() : Response::HTTP_INTERNAL_SERVER_ERROR;
-        $title = \Pimcore::inDebugMode() || $this->exception instanceof HttpExceptionInterface ? $this->exception->getMessage() : 'An error occurred.';
+        $status = Response::HTTP_INTERNAL_SERVER_ERROR;
+        $title = 'An error occurred.';
+
+        if ($this->exception instanceof HttpExceptionInterface) {
+            $status = $this->exception->getStatusCode();
+
+            if (Pimcore::inDebugMode() || $this->exception instanceof HttpExceptionInterface) {
+                $title = $this->exception->getMessage();
+            }
+        } else if ($this->exception instanceof AuthenticationException) {
+            $status = 403;
+            $title = $this->exception->getMessage();
+        }
 
         return [
             'status' => $status,
             'title' => $title,
-            'info' => \Pimcore::inDebugMode() ? $this->exception->getTraceAsString() : null
+            'info' => Pimcore::inDebugMode() ? $this->exception->getTraceAsString() : null
         ];
     }
 }
