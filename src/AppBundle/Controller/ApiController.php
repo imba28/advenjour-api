@@ -6,7 +6,10 @@ use AppBundle\JsonAPI\ErrorObject;
 use AppBundle\JsonAPI\ResourceIdentifier;
 use InvalidArgumentException;
 use Pimcore\Controller\FrontendController;
+use Pimcore\Log\ApplicationLogger;
+use Pimcore\Logger;
 use Pimcore\Model\Listing\AbstractListing;
+use Pimcore\Tool;
 use stdClass;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -111,8 +114,20 @@ class ApiController extends FrontendController
      */
     protected function filterCollectionByRequest(AbstractListing $list, array $filters)
     {
+        $defaultLang = Tool::getDefaultLanguage();
+        $tableName = "object_localized_{$list->getClassId()}_{$defaultLang}";
+        $validColumnNames = $list->getValidTableColumns($tableName, true);
+
         foreach ($filters as $property => $filter) {
-            $column =  $this->escapePropertyString($property);
+            $column = $this->escapePropertyString($property);
+
+            if (!in_array($column, $validColumnNames)) {
+                $logger = $this->get(ApplicationLogger::class);
+                $logger->warning(Tool::getClientIp() . " tried to apply non valid filter '$column' to {$list->getClassName()} listing when accessing {$_SERVER['REQUEST_URI']}!");
+
+                throw new BadRequestHttpException($this->get('translator')->trans('app.errors.invalid_filter', ['{column}' => $column]));
+            }
+
 
             if (preg_match('/^(?<type>[\w]+|\<|\>|\=|\<\>)\:\:/', $filter, $m)) {
                 $filterValue = str_replace($m[0], '', $filter);
@@ -122,6 +137,7 @@ class ApiController extends FrontendController
                         $list->addConditionParam("LOWER({$column}) LIKE ?", "%{$filterValue}%");
                         break;
 
+                    case 'is':
                     case '=':
                         $list->addConditionParam("{$column} = ?", $filterValue);
                         break;
@@ -153,10 +169,6 @@ class ApiController extends FrontendController
                         }
 
                         $list->addConditionParam(join(" {$concatenator} ", $condition), $bindings);
-                        break;
-
-                    case 'is':
-                        $list->addConditionParam("{$column}__id = ?", $filterValue);
                         break;
 
                     default:

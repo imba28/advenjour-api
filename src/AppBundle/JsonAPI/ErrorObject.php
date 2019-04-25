@@ -20,13 +20,15 @@ class ErrorObject implements \JsonSerializable
         $status = Response::HTTP_INTERNAL_SERVER_ERROR;
         $title = 'An error occurred.';
 
+        if (Pimcore::inDebugMode()) {
+            $title = $this->exception->getMessage();
+        }
+
         if ($this->exception instanceof HttpExceptionInterface) {
             $status = $this->exception->getStatusCode();
+        }
 
-            if (Pimcore::inDebugMode() || $this->exception instanceof HttpExceptionInterface) {
-                $title = $this->exception->getMessage();
-            }
-        } else if ($this->exception instanceof AuthenticationException) {
+        if ($this->exception instanceof AuthenticationException) {
             $status = 403;
             $title = $this->exception->getMessage();
         }
