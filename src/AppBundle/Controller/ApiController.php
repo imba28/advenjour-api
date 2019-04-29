@@ -17,6 +17,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
+use Symfony\Component\Routing\Annotation\Route;
 
 class ApiController extends FrontendController
 {
@@ -183,5 +184,23 @@ class ApiController extends FrontendController
     protected function selectCollectionBoundsByRequest(AbstractListing $list, $limit, $offset = 0) {
         $list->setLimit($limit);
         $list->setOffset($offset);
+    }
+
+    /**
+     * @Route("/info", methods={"GET"})
+     */
+    public function infoAction()
+    {
+        return $this->json([
+            'jsonapi' =>  [
+                'version' => '1.0'
+            ],
+            'meta' => [
+                'api' => [
+                    'root' => Tool::getHostUrl() . '/api/v1',
+                    'version' => 'v1'
+                ]
+            ]
+        ]);
     }
 }
