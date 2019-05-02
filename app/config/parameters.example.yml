@@ -1,5 +1,6 @@
 parameters:
     secret: ThisTokenIsNotSoSecretChangeIt
+    redis_prod_password: redisIsCool
 
     # customize the full path to external executables
     # normally they are auto-detected by `which program` or auto-discovered in the configured path in
