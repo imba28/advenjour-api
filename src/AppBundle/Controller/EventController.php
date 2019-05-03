@@ -162,19 +162,19 @@ class EventController extends ApiController
      *
      * @SWG\Parameter(
      *     name="lat",
-     *     in="path",
+     *     in="query",
      *     type="number",
      *     description="Latitude"
      * )
      * @SWG\Parameter(
      *     name="long",
-     *     in="path",
+     *     in="query",
      *     type="number",
      *     description="Longitude"
      * )
      * @SWG\Parameter(
      *     name="range",
-     *     in="path",
+     *     in="query",
      *     type="integer",
      *     description="Range"
      * )
@@ -193,6 +193,35 @@ class EventController extends ApiController
     public function geoSearchAction(Request $request)
     {
         $list = new Event\Listing();
+
+        // https://developers.google.com/maps/solutions/store-locator/clothing-store-locator#finding-locations-with-mysql
+        $list->setCondition('
+        locations REGEXP (
+            SELECT 
+                CONCAT(\',(\', GROUP_CONCAT(locations.id SEPARATOR \'|\'), \'),\') 
+                FROM (
+                    SELECT
+                        oo_id as id,
+                        ( 6371
+                          * acos( cos( radians(:lat) )
+                                  * cos(  radians( geo__latitude )   )
+                                  * cos(  radians( geo__longitude ) - radians(:long) )
+                                + sin( radians(:lat) )
+                                  * sin( radians( geo__latitude ) )
+                                )
+                        )
+                        AS distance
+                    FROM object_2
+                    HAVING distance < :range
+                    ORDER BY distance
+                ) locations
+        )
+        ', [
+            'lat' => $request->get('lat'),
+            'long' => $request->get('long'),
+            'range' => $request->get('range', 25)
+        ]);
+
         return $this->success($this->factory->build(Event::class)->serializeResourceArray($list->load()));
     }
 

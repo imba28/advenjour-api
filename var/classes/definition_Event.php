@@ -1,8 +1,8 @@
 <?php 
 
 /** 
-* Generated at: 2019-04-11T09:59:33+02:00
-* Inheritance: no
+* Generated at: 2019-05-03T23:00:22+02:00
+* Inheritance: yes
 * Variants: no
 * Changed by: admin (2)
 * IP: ::1
@@ -16,7 +16,7 @@ Fields Summary:
 - from [datetime]
 - to [datetime]
 - images [imageGallery]
-- locations [advancedManyToManyRelation]
+- locations [manyToManyObjectRelation]
 - categories [manyToManyObjectRelation]
 - user [manyToOneRelation]
 - rating [slider]
@@ -28,7 +28,7 @@ return Pimcore\Model\DataObject\ClassDefinition::__set_state(array(
    'name' => 'Event',
    'description' => '',
    'creationDate' => 0,
-   'modificationDate' => 1554969573,
+   'modificationDate' => 1556917222,
    'userOwner' => 2,
    'userModification' => 2,
    'parentClass' => '',
@@ -39,7 +39,7 @@ return Pimcore\Model\DataObject\ClassDefinition::__set_state(array(
    'encryptedTables' => 
   array (
   ),
-   'allowInherit' => false,
+   'allowInherit' => true,
    'allowVariants' => NULL,
    'showVariants' => false,
    'layoutDefinitions' => 
@@ -319,43 +319,15 @@ return Pimcore\Model\DataObject\ClassDefinition::__set_state(array(
                  'visibleSearch' => false,
               )),
               3 => 
-              Pimcore\Model\DataObject\ClassDefinition\Data\AdvancedManyToManyRelation::__set_state(array(
-                 'columns' => 
-                array (
-                  0 => 
-                  array (
-                    'type' => 'number',
-                    'position' => 1,
-                    'key' => 'datefrom',
-                    'id' => 'extModel2801-1',
-                    'label' => 'von',
-                  ),
-                  1 => 
-                  array (
-                    'type' => 'text',
-                    'position' => 2,
-                    'key' => 'dateto',
-                    'id' => 'extModel2801-2',
-                    'label' => 'bis',
-                  ),
-                ),
-                 'fieldtype' => 'advancedManyToManyRelation',
-                 'phpdocType' => '\\Pimcore\\Model\\DataObject\\Data\\ElementMetadata[]',
+              Pimcore\Model\DataObject\ClassDefinition\Data\ManyToManyObjectRelation::__set_state(array(
+                 'fieldtype' => 'manyToManyObjectRelation',
                  'width' => '',
                  'height' => '',
                  'maxItems' => '',
-                 'assetUploadPath' => '',
                  'queryColumnType' => 'text',
+                 'phpdocType' => 'array',
                  'relationType' => true,
-                 'objectsAllowed' => true,
-                 'assetsAllowed' => false,
-                 'assetTypes' => 
-                array (
-                ),
-                 'documentsAllowed' => false,
-                 'documentTypes' => 
-                array (
-                ),
+                 'visibleFields' => 'id,key,creationDate,country',
                  'lazyLoading' => true,
                  'classes' => 
                 array (
@@ -371,18 +343,13 @@ return Pimcore\Model\DataObject\ClassDefinition::__set_state(array(
                  'mandatory' => false,
                  'noteditable' => false,
                  'index' => false,
-                 'locked' => false,
+                 'locked' => NULL,
                  'style' => '',
                  'permissions' => NULL,
                  'datatype' => 'data',
                  'invisible' => false,
                  'visibleGridView' => false,
                  'visibleSearch' => false,
-                 'columnKeys' => 
-                array (
-                  0 => 'datefrom',
-                  1 => 'dateto',
-                ),
               )),
               4 => 
               Pimcore\Model\DataObject\ClassDefinition\Data\ManyToManyObjectRelation::__set_state(array(
@@ -480,7 +447,7 @@ return Pimcore\Model\DataObject\ClassDefinition::__set_state(array(
                  'mandatory' => false,
                  'noteditable' => false,
                  'index' => false,
-                 'locked' => NULL,
+                 'locked' => false,
                  'style' => '',
                  'permissions' => NULL,
                  'datatype' => 'data',

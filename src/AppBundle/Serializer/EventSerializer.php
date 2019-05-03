@@ -95,13 +95,7 @@ class EventSerializer extends AbstractSerializer
 
         if (count($object->getLocations()) > 0) {
             $locationSerializer = $this->getSerializer(DataObject\EventLocation::class);
-            $locations = [];
-
-            foreach ($object->getLocations() as $metaData) {
-                if ($location = $metaData->getElement()) {
-                    $locations[] = $metaData->getElement();
-                }
-            }
+            $locations = $object->getLocations();
 
             $resource->addRelationship('locations', $locationSerializer->serializeResourceIdentifierArray($locations));
             if ($this->includeFullResource('locations')) {
