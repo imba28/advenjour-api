@@ -119,7 +119,7 @@ class EventController extends ApiController
     /**
      * Event single resource object.
      *
-     * @Route("/event/{id}.json", methods={"GET"})
+     * @Route("/event/{id}.json", methods={"GET"}, requirements={"id"="\d+"})
      *
      * @SWG\Parameter(
      *     name="id",
@@ -153,6 +153,47 @@ class EventController extends ApiController
         }
 
         throw new NotFoundHttpException('Item not found!');
+    }
+
+    /**
+     * Search for events in range of a geo point.
+     *
+     * @Route("/event/geoSearch.json", methods={"GET"})
+     *
+     * @SWG\Parameter(
+     *     name="lat",
+     *     in="path",
+     *     type="number",
+     *     description="Latitude"
+     * )
+     * @SWG\Parameter(
+     *     name="long",
+     *     in="path",
+     *     type="number",
+     *     description="Longitude"
+     * )
+     * @SWG\Parameter(
+     *     name="range",
+     *     in="path",
+     *     type="integer",
+     *     description="Range"
+     * )
+     *
+     * @SWG\Response(
+     *     response=200,
+     *     description="All events in range of the specified latitude and longitude",
+     *     @Model(type=AppBundle\JsonAPI\Schemas\Event::class)
+     * )
+     * @SWG\Response(response=404, description="Event not found.")
+     *
+     * @param Request $request
+     * @return JsonResponse
+     * @throws \Exception
+     */
+    public function geoSearchAction(Request $request)
+    {
+        $list = new Event\Listing();
+        return $this->success($this->factory->build(Event::class)->serializeResourceArray($list->load()));
     }
 
     /**
