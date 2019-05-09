@@ -102,7 +102,7 @@ class EventLocationController extends ApiController
     /**
      * EventLocation single resource object.
      *
-     * @Route("/locations/{id}.json", methods={"GET"}, requirements={"id"="\d+"})
+     * @Route("/location/{id}.json", methods={"GET"}, requirements={"id"="\d+"})
      *
      * @SWG\Parameter(
      *     name="id",
