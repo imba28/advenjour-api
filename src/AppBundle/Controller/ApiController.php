@@ -133,7 +133,7 @@ class ApiController extends FrontendController
                 throw new BadRequestHttpException($this->get('translator')->trans('app.errors.invalid_filter', ['{column}' => $column]));
             }
 
-            if (preg_match('/^(?<type>[\w]+|\<|\>|\=|\<\>)\:\:/', $filter, $m)) {
+            if (preg_match('/^(?<type>[\w]+|\<|\>|\=|\<\>|\<\=|\>\=)\:\:/', $filter, $m)) {
                 $filterValue = str_replace($m[0], '', $filter);
 
                 switch ($m['type']) {
