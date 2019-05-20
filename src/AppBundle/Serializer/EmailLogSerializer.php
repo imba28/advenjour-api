@@ -25,7 +25,7 @@ class EmailLogSerializer extends AbstractPimcoreModelSerializer
 
         $resource = $this->getSingleResource($object->getId(), 'Email');
         $resource->setAttributes([
-            'dateSent' => Carbon::createFromTimestamp($object->getSentDate())->toDate(),
+            'dateSent' => Carbon::createFromTimestamp($object->getSentDate())->toIso8601String(),
             'from' => $object->getFrom(),
             'to' => $object->getTo(),
             'cc' => $object->getCcAsArray(),

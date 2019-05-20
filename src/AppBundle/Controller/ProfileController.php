@@ -40,7 +40,7 @@ class ProfileController extends ApiController
             'createDate' => date(DATE_ISO8601, time())
         ];
 
-        $json = \GuzzleHttp\json_encode($data);
+        $json = \GuzzleHttp\json_encode($data, JSON_PRETTY_PRINT);
 
         $response = new Response();
         $response->headers->set('Cache-Control', 'private');
