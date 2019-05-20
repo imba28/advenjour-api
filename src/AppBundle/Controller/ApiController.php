@@ -120,6 +120,9 @@ class ApiController extends FrontendController
         $tableName = "object_localized_{$list->getClassId()}_{$defaultLang}";
         $validColumnNames = $list->getValidTableColumns($tableName, true);
 
+        $conditions = [];
+        $conditionParams = [];
+
         foreach ($filters as $property => $filter) {
             $column = $this->escapePropertyString($property);
 
@@ -130,64 +133,79 @@ class ApiController extends FrontendController
                 throw new BadRequestHttpException($this->get('translator')->trans('app.errors.invalid_filter', ['{column}' => $column]));
             }
 
-
             if (preg_match('/^(?<type>[\w]+|\<|\>|\=|\<\>)\:\:/', $filter, $m)) {
                 $filterValue = str_replace($m[0], '', $filter);
 
                 switch ($m['type']) {
                     case 'like':
-                        $list->addConditionParam("LOWER({$column}) LIKE ?", "%{$filterValue}%");
+                        $conditions[] = "LOWER({$column}) LIKE ?";
+                        $conditionParams[] = "%{$filterValue}%";
                         break;
 
                     case 'is':
                     case '=':
-                        $list->addConditionParam("{$column} = ?", $filterValue);
+                        $conditions[] = "{$column} = ?";
+                        $conditionParams[] = $filterValue;
                         break;
 
                     case '<':
-                        $list->addConditionParam("{$column} < ?", $filterValue);
+                        $conditions[] = "{$column} < ?";
+                        $conditionParams[] = $filterValue;
                         break;
 
                     case '<=':
-                        $list->addConditionParam("{$column} <= ?", $filterValue);
+                        $conditions[] = "{$column} <= ?";
+                        $conditionParams[] = $filterValue;
                         break;
 
                     case '>':
-                        $list->addConditionParam("{$column} > ?", $filterValue);
+                        $conditions[] = "{$column} > ?";
+                        $conditionParams[] = $filterValue;
                         break;
 
                     case '>=':
-                        $list->addConditionParam("{$column} >= ?", $filterValue);
+                        $conditions[] = "{$column} >= ?";
+                        $conditionParams[] = $filterValue;
                         break;
 
                     case '<>':
-                        $list->addConditionParam("{$column} <> ?", $filterValue);
+                        $conditions[] = "{$column} <> ?";
+                        $conditionParams[] = $filterValue;
                         break;
 
                     case 'in':
                     case 'inDiff':
                         $filterValue = explode(',', $filterValue);
 
-                        $condition = [];
+                        $subCondition = [];
                         $bindings = [];
 
                         $concatenator = $m['type'] === 'inDiff' ? 'AND' : 'OR';
 
                         foreach ($filterValue as $value) {
-                            $condition[] = "FIND_IN_SET(?, {$column})";
+                            $subCondition[] = "FIND_IN_SET(?, {$column})";
                             $bindings[] = $value;
                         }
 
-                        $list->addConditionParam(join(" {$concatenator} ", $condition), $bindings);
+                        $conditions[] = join(" {$concatenator} ", $subCondition);
+
+                        foreach ($bindings as $binding) {
+                            $conditionParams[] = $binding;
+                        }
                         break;
 
                     default:
                         // todo handle error?
                 }
             } else {
-                $list->addConditionParam("{$column} = ?", $filter);
+                $conditions[] = "{$column} = ?";
+                $conditionParams[] = $filter;
             }
         }
+
+
+        $list->setCondition(join(' AND ', $conditions), $conditionParams);
+
     }
 
     protected function selectCollectionBoundsByRequest(AbstractListing $list, $limit, $offset = 0)
