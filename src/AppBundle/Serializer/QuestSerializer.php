@@ -35,6 +35,10 @@ class QuestSerializer extends AbstractPimcoreModelSerializer
             $this->throwInvalidTypeException($object, Quest::class);
         }
 
+        $this->getSerializer(Asset::class)->setThumbnails([
+            'questCollapsable'
+        ]);
+
         $resource = $this->getSingleResource($object->getId(), $object->getClassName());
         $resource->setAttributes([
             'name' => $object->getName(),
