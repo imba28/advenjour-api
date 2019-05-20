@@ -1,4 +1,5 @@
 <?php
+
 namespace AppBundle\Controller;
 
 use AppBundle\JsonAPI\Document;
@@ -147,8 +148,16 @@ class ApiController extends FrontendController
                         $list->addConditionParam("{$column} < ?", $filterValue);
                         break;
 
+                    case '<=':
+                        $list->addConditionParam("{$column} <= ?", $filterValue);
+                        break;
+
                     case '>':
                         $list->addConditionParam("{$column} > ?", $filterValue);
+                        break;
+
+                    case '>=':
+                        $list->addConditionParam("{$column} >= ?", $filterValue);
                         break;
 
                     case '<>':
@@ -181,7 +190,8 @@ class ApiController extends FrontendController
         }
     }
 
-    protected function selectCollectionBoundsByRequest(AbstractListing $list, $limit, $offset = 0) {
+    protected function selectCollectionBoundsByRequest(AbstractListing $list, $limit, $offset = 0)
+    {
         $list->setLimit($limit);
         $list->setOffset($offset);
     }
@@ -192,7 +202,7 @@ class ApiController extends FrontendController
     public function infoAction()
     {
         return $this->json([
-            'jsonapi' =>  [
+            'jsonapi' => [
                 'version' => '1.0'
             ],
             'meta' => [
