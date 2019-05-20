@@ -37,6 +37,14 @@ class SerializerFactory
             $class = get_class($class);
         }
 
+        if (is_array($class)) {
+            if (count($class) <= 0) {
+                throw new \InvalidArgumentException('Cannot extract class name from empty array!');
+            }
+
+            $class = get_class($class[0]);
+        }
+
         foreach ($this->services as $service) {
             if ($service->supports($class)) {
                 return $service;

@@ -17,8 +17,8 @@ security:
         check_path: app_auth_login
         failure_handler: app.security.authentication_error_handler
   access_control:
+    - { path: /api/v1/profile, roles: ROLE_USER } # TODO REMOVE THIS
     - { path: /, roles: IS_AUTHENTICATED_ANONYMOUSLY} # TODO REMOVE THIS
-    - { methods: [OPTIONS], roles: IS_AUTHENTICATED_ANONYMOUSLY}
     - { path: /api/doc, roles: IS_AUTHENTICATED_ANONYMOUSLY }
     - { path: /api/v1/public, roles: IS_AUTHENTICATED_ANONYMOUSLY }
     - { path: /api/v1/auth, roles: IS_AUTHENTICATED_ANONYMOUSLY }
