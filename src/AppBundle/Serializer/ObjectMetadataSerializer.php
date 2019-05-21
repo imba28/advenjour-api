@@ -18,6 +18,7 @@ class ObjectMetadataSerializer extends AbstractSerializer
     /**
      * @param ObjectMetadata $object
      * @return ResourceIdentifier
+     * @throws \Exception
      */
     public function serializeResource($object): ResourceIdentifier
     {
