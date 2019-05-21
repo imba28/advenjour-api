@@ -4,6 +4,7 @@ namespace AppBundle\Serializer;
 use AppBundle\JsonAPI\ResourceIdentifier;
 use AppBundle\JsonAPI\SingleResource;
 use Pimcore\Model\Asset;
+use Pimcore\Model\DataObject\Data\ObjectMetadata;
 use Pimcore\Model\DataObject\Event;
 use Pimcore\Model\DataObject\Quest;
 
@@ -61,7 +62,7 @@ class QuestSerializer extends AbstractPimcoreModelSerializer
         }
 
         if (count($object->getEvents()) > 0) {
-            $eventSerializer = $this->getSerializer(Event::class);
+            $eventSerializer = $this->getSerializer(ObjectMetadata::class);
 
             $resource->addRelationship(
                 'events',

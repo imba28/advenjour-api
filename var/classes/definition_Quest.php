@@ -1,11 +1,11 @@
 <?php 
 
 /** 
-* Generated at: 2019-04-08T16:19:20+02:00
+* Generated at: 2019-05-21T18:47:54+02:00
 * Inheritance: no
 * Variants: no
 * Changed by: admin (2)
-* IP: ::1
+* IP: 127.0.0.1
 
 
 Fields Summary: 
@@ -14,7 +14,7 @@ Fields Summary:
 -- description [wysiwyg]
 - images [imageGallery]
 - public [checkbox]
-- events [manyToManyObjectRelation]
+- events [advancedManyToManyObjectRelation]
 - user [manyToOneRelation]
 - categories [manyToManyObjectRelation]
 - eventCount [numeric]
@@ -26,7 +26,7 @@ return Pimcore\Model\DataObject\ClassDefinition::__set_state(array(
    'name' => 'Quest',
    'description' => '',
    'creationDate' => 0,
-   'modificationDate' => 1554733160,
+   'modificationDate' => 1558457274,
    'userOwner' => 2,
    'userModification' => 2,
    'parentClass' => '',
@@ -240,7 +240,7 @@ return Pimcore\Model\DataObject\ClassDefinition::__set_state(array(
                      'mandatory' => false,
                      'noteditable' => false,
                      'index' => false,
-                     'locked' => NULL,
+                     'locked' => false,
                      'style' => '',
                      'permissions' => NULL,
                      'datatype' => 'data',
@@ -274,15 +274,29 @@ return Pimcore\Model\DataObject\ClassDefinition::__set_state(array(
              'childs' => 
             array (
               0 => 
-              Pimcore\Model\DataObject\ClassDefinition\Data\ManyToManyObjectRelation::__set_state(array(
-                 'fieldtype' => 'manyToManyObjectRelation',
+              Pimcore\Model\DataObject\ClassDefinition\Data\AdvancedManyToManyObjectRelation::__set_state(array(
+                 'allowedClassId' => 'Event',
+                 'visibleFields' => 'name,id,fullpath',
+                 'columns' => 
+                array (
+                  0 => 
+                  array (
+                    'type' => 'number',
+                    'position' => 1,
+                    'key' => 'finishdate',
+                    'id' => 'extModel576-1',
+                    'label' => 'Abgeschlossen am',
+                    'width' => NULL,
+                  ),
+                ),
+                 'fieldtype' => 'advancedManyToManyObjectRelation',
+                 'phpdocType' => '\\Pimcore\\Model\\DataObject\\Data\\ObjectMetadata[]',
+                 'enableBatchEdit' => false,
                  'width' => '',
                  'height' => '',
                  'maxItems' => '',
                  'queryColumnType' => 'text',
-                 'phpdocType' => 'array',
                  'relationType' => true,
-                 'visibleFields' => 'name,id,fullpath',
                  'lazyLoading' => true,
                  'classes' => 
                 array (
@@ -298,13 +312,17 @@ return Pimcore\Model\DataObject\ClassDefinition::__set_state(array(
                  'mandatory' => false,
                  'noteditable' => false,
                  'index' => false,
-                 'locked' => false,
+                 'locked' => NULL,
                  'style' => '',
                  'permissions' => NULL,
                  'datatype' => 'data',
                  'invisible' => false,
                  'visibleGridView' => false,
                  'visibleSearch' => false,
+                 'columnKeys' => 
+                array (
+                  0 => 'finishdate',
+                ),
               )),
               1 => 
               Pimcore\Model\DataObject\ClassDefinition\Data\ManyToOneRelation::__set_state(array(
@@ -396,7 +414,7 @@ return Pimcore\Model\DataObject\ClassDefinition::__set_state(array(
                  'mandatory' => false,
                  'noteditable' => false,
                  'index' => false,
-                 'locked' => NULL,
+                 'locked' => false,
                  'style' => '',
                  'permissions' => NULL,
                  'datatype' => 'data',
@@ -425,7 +443,7 @@ return Pimcore\Model\DataObject\ClassDefinition::__set_state(array(
                  'mandatory' => false,
                  'noteditable' => false,
                  'index' => false,
-                 'locked' => NULL,
+                 'locked' => false,
                  'style' => '',
                  'permissions' => NULL,
                  'datatype' => 'data',
