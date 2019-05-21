@@ -6,6 +6,7 @@ use AppBundle\Serializer\UserSerializer;
 use AppBundle\Service\JwtTokenGenerator;
 use AppBundle\Service\PasswordPwnedChecker;
 use Exception;
+use Pimcore\Log\ApplicationLogger;
 use Pimcore\Mail;
 use Pimcore\Model\Document\Email;
 use Respect\Validation\Exceptions\ValidationException;
@@ -34,6 +35,9 @@ class AuthController extends ApiController
 
     /**
      * @Route("/auth/login", name="app_auth_login", methods={"POST"})
+     * @param Request $request
+     * @param JwtTokenGenerator $tokenGenerator
+     * @param ApplicationLogger $logger
      * @return Response
      *
      * @throws Exception
@@ -55,12 +59,16 @@ class AuthController extends ApiController
      * @SWG\Response(response=200, description="Single response of user object containing id, username and email")
      * @SWG\Response(response=401, description="Invalid credentials response")
      */
-    public function loginAction(JwtTokenGenerator $tokenGenerator)
+    public function loginAction(Request $request, JwtTokenGenerator $tokenGenerator, ApplicationLogger $logger)
     {
         /** @var User $user */
         $user = $this->getUser();
 
         if ($user && $this->isGranted('ROLE_USER')) {
+            $logger->info("Login with user {$user->getEmail()} from IP {$request->getClientIp()}.", [
+                'component' => self::class
+            ]);
+
             return $this->success($this->serializer->serializeResource($user), 200, [
                 'jwtToken' => $tokenGenerator->getPayload($user)
             ]);
@@ -139,12 +147,12 @@ class AuthController extends ApiController
             }));
 
         try {
-            $input['password_pwned'] = $input['password'];
-            $validators->assert($input);
-
             if (User::getByEmail($input['email'], 1)) {
                 throw new DuplicateUserException("User with {$input['email']} already exists");
             }
+
+            $input['password_pwned'] = $input['password'];
+            $validators->assert($input);
 
             $user = User::create($input);
             $user->setKey($input['email']);
