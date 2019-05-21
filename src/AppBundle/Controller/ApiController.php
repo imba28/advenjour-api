@@ -8,7 +8,6 @@ use AppBundle\JsonAPI\ResourceIdentifier;
 use InvalidArgumentException;
 use Pimcore\Controller\FrontendController;
 use Pimcore\Log\ApplicationLogger;
-use Pimcore\Logger;
 use Pimcore\Model\Listing\AbstractListing;
 use Pimcore\Tool;
 use stdClass;

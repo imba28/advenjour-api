@@ -3,10 +3,11 @@ namespace AppBundle\Controller;
 
 use AppBundle\Model\DataObject\User;
 use AppBundle\Serializer\UserSerializer;
+use AppBundle\Service\JwtTokenGenerator;
 use AppBundle\Service\PasswordPwnedChecker;
 use Exception;
-use Firebase\JWT\JWT;
-use Pimcore\Tool;
+use Pimcore\Mail;
+use Pimcore\Model\Document\Email;
 use Respect\Validation\Exceptions\ValidationException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -54,25 +55,14 @@ class AuthController extends ApiController
      * @SWG\Response(response=200, description="Single response of user object containing id, username and email")
      * @SWG\Response(response=401, description="Invalid credentials response")
      */
-    public function loginAction()
+    public function loginAction(JwtTokenGenerator $tokenGenerator)
     {
         /** @var User $user */
         $user = $this->getUser();
 
-
         if ($user && $this->isGranted('ROLE_USER')) {
-            $payload = [
-                'iss' => Tool::getHostUrl(),
-                'aud' => Tool::getHostUrl(),
-                'iat' => time(),
-                'sub' => 'user',
-                'uid' => $user->getId(),
-                'ip' => Tool::getClientIp(),
-                'email' => $user->getEmail()
-            ];
-
             return $this->success($this->serializer->serializeResource($user), 200, [
-                'jwtToken' => JWT::encode($payload, $this->getParameter('secret'))
+                'jwtToken' => $tokenGenerator->getPayload($user)
             ]);
         }
     }
@@ -163,6 +153,19 @@ class AuthController extends ApiController
 
             $user->save();
 
+            if ($document = Email::getByPath('/auth/registrationConfirmation')) {
+                $email = new Mail();
+                $email->setDocument($document);
+                $email->setTo($user->getEmail(), "{$user->getFirstname()} {$user->getLastname()}");
+                $email->setParams([
+                    'activationHash' => $user->getActivationHash(),
+                    'firstname' => $user->getFirstname(),
+                    'lastname' => $user->getLastname()
+                ]);
+
+                $email->send();
+            }
+
             return $this->success($this->serializer->serializeResource($user), Response::HTTP_CREATED);
         } catch (ValidationException $e) {
             $errors = array_filter(
@@ -176,9 +179,20 @@ class AuthController extends ApiController
 
             return $this->error($errors, Response::HTTP_UNPROCESSABLE_ENTITY);
         } catch (DuplicateUserException $e) {
-            return $this->error($e->getMessage(), Response::HTTP_UNPROCESSABLE_ENTITY);
+            return $this->error($this->get('translator')->trans('auth.register.errors.email'), Response::HTTP_UNPROCESSABLE_ENTITY);
         } catch (Exception $e) {
             return $this->error('Model validation failed.', Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
+    }
+
+    /**
+     * @Route("/auth/confirm/{activationHash}", methods={"GET"})
+     */
+    public function confirmationAction(Request $request)
+    {
+        if ($user = User::getByActivationHash($request->get('activationHash'), 1)) {
+            p_r($request->get('activationHash'));
+            p_r($user);
         }
     }
 }

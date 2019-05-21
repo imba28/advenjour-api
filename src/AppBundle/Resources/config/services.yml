@@ -24,6 +24,10 @@ services:
         tags:
             - { name:kernel.event_listener, event: kernel.exception }
 
+    AppBundle\EventListener\KernelResponseListener:
+        tags:
+            - { name:kernel.event_listener, event: kernel.response }
+
     AppBundle\Serializer\:
         resource: '../../Serializer'
 
@@ -37,6 +41,10 @@ services:
 
     app.security.jwt_authenticator:
         class: AppBundle\Security\JwtAuthenticator
+        arguments:
+            - %secret%
+
+    AppBundle\Service\JwtTokenGenerator:
         arguments:
             - %secret%
 

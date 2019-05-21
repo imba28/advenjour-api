@@ -9,7 +9,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\HttpException;
-use Symfony\Component\Security\Core\Exception\AuthenticationExpiredException;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Guard\AbstractGuardAuthenticator;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
@@ -117,9 +116,11 @@ class JwtAuthenticator extends AbstractGuardAuthenticator
             throw new AuthenticationException('Invalid paload.');
         }
 
+        /* todo enable this again
         if ($payload->iat <= time() - self::JWT_TOKEN_TTL) {
             throw new AuthenticationExpiredException('authentication expired');
         }
+        */
 
         if ($payload->ip !== Tool::getClientIp()) {
             throw new AuthenticationException('authentication expired');
