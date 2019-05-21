@@ -28,6 +28,10 @@ class KernelResponseListener
     public function __construct(JwtTokenGenerator $tokenGenerator, TokenStorage $storage)
     {
         $this->tokenGenerator = $tokenGenerator;
+
+        if ($storage->getToken() === null) {
+            return;
+        }
         $this->user = $storage->getToken()->getUser();
     }
 
