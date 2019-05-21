@@ -194,6 +194,9 @@ class EventController extends ApiController
     {
         $list = new Event\Listing();
 
+        $lat = $request->get('lat');
+        $long = $request->get('long');
+
         // https://developers.google.com/maps/solutions/store-locator/clothing-store-locator#finding-locations-with-mysql
         $list->setCondition('
         locations REGEXP (
@@ -217,8 +220,8 @@ class EventController extends ApiController
                 ) locations
         )
         ', [
-            'lat' => $request->get('lat'),
-            'long' => $request->get('long'),
+            'lat' => doubleval($lat),
+            'long' => doubleval($long),
             'range' => $request->get('range', 25)
         ]);
 
