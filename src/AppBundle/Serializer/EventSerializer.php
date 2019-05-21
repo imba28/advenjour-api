@@ -77,7 +77,7 @@ class EventSerializer extends AbstractSerializer
             }
         }
 
-        if (count($object->getCategories()) > 0) {
+        if (is_array($object->getCategories()) && count($object->getCategories()) > 0) {
             $categorySerializer = $this->getSerializer(EventCategory::class);
 
             $resource->addRelationship(
@@ -93,7 +93,7 @@ class EventSerializer extends AbstractSerializer
             }
         }
 
-        if (count($object->getLocations()) > 0) {
+        if (is_array($object->getLocations()) && count($object->getLocations()) > 0) {
             $locationSerializer = $this->getSerializer(DataObject\EventLocation::class);
             $locations = $object->getLocations();
 
