@@ -29,7 +29,6 @@ class ResourceUpdateService
         foreach ($resource->getAttributes() as $key => $value) {
             $setter = "set{$key}";
             if (!method_exists($object, $setter)) {
-                p_r($resource);
                 throw new UnprocessableEntityHttpException($this->translator->trans('event.errors.update_invalid_property'));
             }
 
