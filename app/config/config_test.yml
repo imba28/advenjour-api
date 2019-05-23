@@ -19,4 +19,4 @@ doctrine:
 
 parameters:
     pimcore_test.db.dsn: '%env(PIMCORE_TEST_DB_DSN)%'
-    env(PIMCORE_TEST_DB_DSN): ~
+    env(PIMCORE_TEST_DB_DSN): 'mysql://mmp3_test:auchkeins@localhost:3306/mmp3_testing'

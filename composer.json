@@ -26,6 +26,9 @@
       "Pimcore\\Model\\Object\\": "var/classes/Object",
       "Website\\": "legacy/website/lib"
     },
+    "exclude-from-classmap": [
+      "vendor/phpunit"
+    ],
     "classmap": [
       "app/AppKernel.php"
     ]
