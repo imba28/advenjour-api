@@ -1,6 +1,7 @@
 <?php
 namespace AppBundle\Serializer;
 
+use AppBundle\JsonAPI\ResourceGalleryWrapper;
 use AppBundle\JsonAPI\ResourceIdentifier;
 use AppBundle\JsonAPI\SingleResource;
 use Pimcore\Model\Asset;
@@ -44,7 +45,8 @@ class QuestSerializer extends AbstractPimcoreModelSerializer
         $resource->setAttributes([
             'name' => $object->getName(),
             'description' => $object->getDescription(),
-            'public' => $object->getPublic() ? true: false
+            'public' => $object->getPublic() ? true : false,
+            'steps' => $object->getSteps()
         ]);
 
         if ($object->getImages() && count($object->getImages()->getItems()) > 0) {
@@ -77,6 +79,22 @@ class QuestSerializer extends AbstractPimcoreModelSerializer
             }
         }
 
+        if (($categories = $object->getCategories()) && count($categories) > 0) {
+            $categorySerializer = $this->getSerializer($categories);
+
+            $resource->addRelationship(
+                'categories',
+                $categorySerializer->serializeResourceIdentifierArray($categories)
+            );
+
+            if ($this->includeFullResource('categories')) {
+                $resource->addInclude(
+                    'categories',
+                    $eventSerializer->serializeResourceArray($categories)
+                );
+            }
+        }
+
         return $resource;
     }
 
@@ -84,6 +102,14 @@ class QuestSerializer extends AbstractPimcoreModelSerializer
         $resource->setAttributes([
             'name' => $data['attributes']['name'],
             'description' => $data['attributes']['description'],
+            'public' => $data['attributes']['description'],
+            'steps' => $data['attributes']['steps']
         ]);
+
+        // manually add gallery wrapper class
+        if (isset($resource->getRelationships()['images'])) {
+            $images = $resource->getRelationship('images');
+            $resource->addRelationship('images', new ResourceGalleryWrapper($images));
+        }
     }
 }
