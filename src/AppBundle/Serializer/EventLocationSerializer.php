@@ -2,6 +2,8 @@
 namespace AppBundle\Serializer;
 
 use AppBundle\JsonAPI\ResourceIdentifier;
+use AppBundle\JsonAPI\SingleResource;
+use Pimcore\Model\DataObject\Data\Geopoint;
 use Pimcore\Model\DataObject\EventLocation;
 
 /**
@@ -42,5 +44,22 @@ class EventLocationSerializer extends AbstractPimcoreModelSerializer
         }
 
         return $resource;
+    }
+
+    public function unserializeResource(array $data, SingleResource $resource) {
+        $resource->setAttributes([
+            'name' => $data['attributes']['name'],
+            'address' => $data['attributes']['address'],
+            'city' => $data['attributes']['city'],
+            'zip' => $data['attributes']['zip'],
+            'country' => $data['attributes']['country']
+        ]);
+
+        if (isset($data['attributes']['geo'])) {
+            $resource->addAttribute('geo', new Geopoint(
+                $data['attributes']['geo']['long'],
+                $data['attributes']['geo']['lat']
+            ));
+        }
     }
 }
