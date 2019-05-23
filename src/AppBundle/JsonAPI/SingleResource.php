@@ -23,6 +23,11 @@ class SingleResource extends ResourceIdentifier
         return $this->attributes;
     }
 
+    public function getAttribute(string $key)
+    {
+        return $this->attributes[$key];
+    }
+
     public function setRelationships(array $relationships)
     {
         $this->relationships = $relationships;
@@ -36,6 +41,11 @@ class SingleResource extends ResourceIdentifier
     public function getRelationships(): array
     {
         return $this->relationships;
+    }
+
+    public function getRelationship(string $name)
+    {
+        return $this->relationships[$name];
     }
 
     public function setIncludes(array $includes)
