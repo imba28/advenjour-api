@@ -35,7 +35,8 @@ class EventCategorySerializer extends AbstractSerializer
         }
 
         $this->getSerializer(Asset::class)->setThumbnails([
-            'eventCategoryOverview'
+            'eventCategoryOverview',
+            'checkBoxImage'
         ]);
 
         $singleResource = $this->getSingleResource($object->getId(), $object->getClassName());
