@@ -37,32 +37,38 @@ class ResourceUpdateService
 
         foreach ($resource->getRelationships() as $relationshipName => $relationship) {
             $setter = "set{$relationshipName}";
+
             if (!method_exists($object, $setter)) {
                 throw new UnprocessableEntityHttpException($this->translator->trans('event.errors.update_invalid_relationship'));
             }
 
-
             if (is_array($relationship)) {
                 $list = [];
 
-                if ($this->hasMetadata($relationship)) {
-                    /** @var ResourceIdentifier $resourceIdentifier */
-                    foreach ($relationship as $resourceIdentifier) {
-                        $meta = $resourceIdentifier->getMeta();
-                        $objetMetadata = new DataObject\Data\ObjectMetadata($relationshipName, array_keys($meta), $resourceIdentifier->getDataObject());
+                /** @var  $relationshipDefinition */
+                try {
+                    $relationshipDefinition = $object->getClass()->getFieldDefinition($relationshipName);
+                    if ($relationshipDefinition instanceof DataObject\ClassDefinition\Data\AdvancedManyToManyObjectRelation) {
+                        /** @var ResourceIdentifier $resourceIdentifier */
+                        foreach ($relationship as $resourceIdentifier) {
+                            $meta = $resourceIdentifier->getMeta();
+                            $objetMetadata = new DataObject\Data\ObjectMetadata($relationshipName, array_keys($meta), $resourceIdentifier->getDataObject());
 
-                        if (!empty($meta)) {
-                            $objetMetadata->setData($meta);
+                            if (!empty($meta)) {
+                                $objetMetadata->setData($meta);
+                            }
+
+                            $objetMetadata->setElement($resourceIdentifier->getDataObject());
+                            $list[] = $objetMetadata;
                         }
+                    } else {
+                        /** @var ResourceIdentifier $resourceIdentifier */
+                        foreach ($relationship as $resourceIdentifier) {
+                            $list[] = $resourceIdentifier->getDataObject();
+                        }
+                    }
+                } catch (\Exception $e) {
 
-                        $objetMetadata->setElement($resourceIdentifier->getDataObject());
-                        $list[] = $objetMetadata;
-                    }
-                } else {
-                    /** @var ResourceIdentifier $resourceIdentifier */
-                    foreach ($relationship as $resourceIdentifier) {
-                        $list[] = $resourceIdentifier->getDataObject();
-                    }
                 }
 
                 $object->$setter($list);
