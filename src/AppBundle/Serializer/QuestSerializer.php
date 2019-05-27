@@ -37,7 +37,8 @@ class QuestSerializer extends AbstractPimcoreModelSerializer
         }
 
         $this->getSerializer(Asset::class)->setThumbnails([
-            'questCollapsable'
+            'questCollapsable',
+            "carouselImg"
         ]);
 
         $resource = $this->getSingleResource($object->getId(), $object->getClassName());
