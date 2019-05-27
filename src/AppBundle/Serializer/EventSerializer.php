@@ -123,8 +123,8 @@ class EventSerializer extends AbstractSerializer
             'name' => $data['attributes']['name'],
             'description' => $data['attributes']['description'],
             'price' => $price,
-            'from' => Carbon::parse($data['attributes']['data']['from']),
-            'to' => Carbon::parse($data['attributes']['data']['to']),
+            'from' => Carbon::parse($data['attributes']['date']['from']),
+            'to' => Carbon::parse($data['attributes']['date']['to']),
             'rating' => intval($data['attributes']['rating'])
         ]);
 

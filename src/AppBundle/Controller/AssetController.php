@@ -126,7 +126,7 @@ class AssetController extends ApiController
                 return $this->error($this->get('translator')->trans('asset.errors.save_error'), Response::HTTP_INTERNAL_SERVER_ERROR);
             }
 
-            $logger->error(self::class . ' created a new asset object!', [
+            $logger->info(self::class . ' created a new asset object!', [
                 'fileObject' => $asset
             ]);
 

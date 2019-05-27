@@ -1,13 +1,17 @@
 <?php
 namespace AppBundle\Controller;
 
+use AppBundle\Serializer\NotSerializableException;
 use AppBundle\Serializer\SerializerFactory;
+use AppBundle\Service\ResourceUpdateService;
+use Pimcore\Model\DataObject\ContactMessage;
 use Pimcore\Model\DataObject\EventLocation;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Swagger\Annotations as SWG;
 
@@ -129,5 +133,42 @@ class EventLocationController extends ApiController
         }
 
         throw new NotFoundHttpException('Item not found!');
+    }
+
+    /**
+     * List of event objects.
+     *
+     * @Route("/locations.json", methods={"POST"})
+
+     * @SWG\Response(response=201, description="The created object")
+     *
+     * @param Request $request
+     * @return JsonResponse
+     * @throws \Exception
+     */
+    public function createAction(Request $request, ResourceUpdateService $updateService)
+    {
+        $serializer = $this->factory->build(EventLocation::class);
+
+        try {
+            if (($input = json_decode($request->getContent(), true)) === null) {
+                throw new UnprocessableEntityHttpException('contact.error.invalid_payload');
+            }
+
+            // todo @lg this is ugly. should just require once method call!
+            $resource = $serializer->unserializeEmptyResource($input);
+            $serializer->unserializeResource($input, $resource);
+
+            $message = new EventLocation();
+            $message->setKey($resource->getAttribute('name') . '-' . time());
+            $message->setParentId(5);
+            $message->setPublished(true);
+
+            $updateService->update($message, $resource);
+
+            return $this->success($serializer->serializeResource($message), Response::HTTP_CREATED);
+        } catch (NotSerializableException $e) {
+            throw new UnprocessableEntityHttpException($this->get('translator')->trans($e->getMessage()));
+        }
     }
 }

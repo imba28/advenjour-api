@@ -143,13 +143,25 @@ abstract class AbstractSerializer implements SerializerInterface
             foreach ($data['relationships'] as $name => $relationship) {
                 if (is_array($relationship)) {
                     $relation = [];
-                    foreach ($relationship as $resourceIdentifier) {
-                        $relation[] = new ResourceIdentifier($resourceIdentifier['id'], $resourceIdentifier['type']);
+                    foreach ($relationship as $resourceIdentifierData) {
+                        $resourceIdentifier =  new ResourceIdentifier($resourceIdentifierData['id'], $resourceIdentifierData['type']);
+                        if (isset($resourceIdentifierData['meta'])) {
+                            foreach ($resourceIdentifierData['meta'] as $key => $value) {
+                                $resourceIdentifier->addMeta($key, $value);
+                            }
+                        }
+                        $relation[] = $resourceIdentifier;
                     }
 
                     $resource->addRelationship($name, $relation);
                 } else {
-                    $resource->addRelationship($name, new ResourceIdentifier($relationship['id'], $relationship['type']));
+                    if (isset($resourceIdentifierData['meta'])) {
+                        $resourceIdentifier = new ResourceIdentifier($relationship['id'], $relationship['type']);
+                        foreach ($relationship['meta'] as $key => $value) {
+                            $resourceIdentifier->addMeta($key, $value);
+                        }
+                    }
+                    $resource->addRelationship($name, $resourceIdentifier);
                 }
             }
         }

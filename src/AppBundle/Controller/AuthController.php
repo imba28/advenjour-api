@@ -8,11 +8,13 @@ use AppBundle\Service\PasswordPwnedChecker;
 use Exception;
 use Pimcore\Log\ApplicationLogger;
 use Pimcore\Mail;
+use Pimcore\Model\DataObject\Folder;
 use Pimcore\Model\Document\Email;
 use Respect\Validation\Exceptions\ValidationException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Respect\Validation\Validator as v;
 use Swagger\Annotations as SWG;
@@ -156,8 +158,9 @@ class AuthController extends ApiController
 
             $user = User::create($input);
             $user->setKey($input['email']);
-            $user->setParentId(8);
+            $user->setParent(Folder::getByPath('/users/not-confirmed'));
             $user->setPublished(true);
+            $user->setActivationHash(hash('sha256', $user->getEmail() . time()));
 
             $user->save();
 
@@ -198,9 +201,16 @@ class AuthController extends ApiController
      */
     public function confirmationAction(Request $request)
     {
-        if ($user = User::getByActivationHash($request->get('activationHash'), 1)) {
-            p_r($request->get('activationHash'));
-            p_r($user);
+        /** @var User $user */
+        if (!($user = User::getByActivationHash($request->get('activationHash'), 1))) {
+            throw new NotFoundHttpException('auth.confirmation.user_not_found');
         }
+
+        $user->setActive(true);
+        $user->setEmailConfirmed(true);
+        $user->setParent(Folder::getByPath('/users'));
+        $user->save();
+
+        return $this->success([], Response::HTTP_CREATED);
     }
 }

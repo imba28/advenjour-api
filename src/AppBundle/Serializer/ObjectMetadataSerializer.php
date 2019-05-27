@@ -2,6 +2,7 @@
 namespace AppBundle\Serializer;
 
 use AppBundle\JsonAPI\ResourceIdentifier;
+use AppBundle\JsonAPI\SingleResource;
 use Pimcore\Model\DataObject\Data\ObjectMetadata;
 
 class ObjectMetadataSerializer extends AbstractSerializer
@@ -60,5 +61,10 @@ class ObjectMetadataSerializer extends AbstractSerializer
         }
 
         return $resourceIdentifier;
+    }
+
+    public function unserializeResource(array $data, SingleResource $resource)
+    {
+        throw new \Exception('method not implemented');
     }
 }

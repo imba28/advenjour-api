@@ -64,6 +64,16 @@ class ResourceIdentifier implements \JsonSerializable
         $this->meta[$key] = $value;
     }
 
+    public function hasMeta(): bool
+    {
+        return count($this->meta) > 0;
+    }
+
+    public function getMeta(): array
+    {
+        return $this->meta;
+    }
+
     /**
      * Get the corresponding resource
      * @return ElementInterface|null
