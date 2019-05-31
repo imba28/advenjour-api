@@ -30,7 +30,7 @@ class LandingpageController extends ApiController
     /**
      * Get info about the active landing page.
      *
-     * @Route("/public/landingpage/active", methods={"GET"})
+     * @Route("/public/landingpage/active.json", methods={"GET"})
      *
      * @SWG\Parameter(
      *     name="include",
