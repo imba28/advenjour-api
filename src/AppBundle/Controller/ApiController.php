@@ -8,6 +8,7 @@ use AppBundle\JsonAPI\ResourceIdentifier;
 use InvalidArgumentException;
 use Pimcore\Controller\FrontendController;
 use Pimcore\Log\ApplicationLogger;
+use Pimcore\Model\DataObject\Folder;
 use Pimcore\Model\Listing\AbstractListing;
 use Pimcore\Tool;
 use stdClass;
@@ -211,6 +212,52 @@ class ApiController extends FrontendController
     {
         $list->setLimit($limit);
         $list->setOffset($offset);
+    }
+
+    /**
+     * Get folder by path. If folder or parent folder does not exist, the method will create it.
+     * @param string $path
+     * @param string $folderClass
+     * @return Folder|\Pimcore\Model\Asset\Folder|\Pimcore\Model\Document\Folder
+     */
+    protected function getFolderRecursively(string $path, string $folderClass = Folder::class)
+    {
+        if ($path === '/') {
+            return $folderClass::getByPath($path);
+        }
+
+        $parentFolders = explode('/', $path);
+
+        $currentPath = '';
+        $lastFolder = null;
+
+        array_shift($parentFolders); // remove root path
+
+        foreach ($parentFolders as $folderName) {
+            if (strlen(trim($folderName)) === 0) {
+                continue;
+            }
+
+            $currentPath .= "/$folderName";
+            $folder = $folderClass::getByPath($currentPath);
+
+            if ($folder === null) {
+                $folder = new $folderClass();
+
+                if ($folderClass === \Pimcore\Model\Asset\Folder::class) {
+                    $folder->setFilename($folderName);
+                } else {
+                    $folder->setKey($folderName);
+                }
+
+                $folder->setParentId($lastFolder ? $lastFolder->getId() : 1);
+                $folder->save();
+            }
+
+            $lastFolder = $folder;
+        }
+
+        return $lastFolder;
     }
 
     /**
