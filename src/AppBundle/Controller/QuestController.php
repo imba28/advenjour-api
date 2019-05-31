@@ -280,22 +280,21 @@ class QuestController extends ApiController
         }
 
         $input = json_decode($request->getContent(), true);
-
         $serializer = $this->factory->build(Quest::class);
-
-        try {
-            // todo @lg this is ugly. should just require once method call!
-            $resource = $serializer->unserializeEmptyResource($input);
-            $serializer->unserializeResource($input, $resource);
-        } catch (NotSerializableException $e) {
-            throw new UnprocessableEntityHttpException($this->get('translator')->trans($e->getMessage()));
-        }
 
         if (!($quest = Quest::getById($request->get('id')))) {
             throw new NotFoundHttpException('Quest not found!');
         }
 
+        if ($quest->getUser() !== $this->getUser()) {
+            throw new HttpException(Response::HTTP_UNAUTHORIZED, $this->get('translator')->trans('quest.errors.unauthorized'));
+        }
+
         try {
+            // todo @lg this is ugly. should just require once method call!
+            $resource = $serializer->unserializeEmptyResource($input);
+            $serializer->unserializeResource($input, $resource);
+
             $updateService->update($quest, $resource);
             return $this->success($this->factory->build(Quest::class)->serializeResource($quest), Response::HTTP_CREATED);
         } catch (ValidationException $e) {
@@ -308,6 +307,8 @@ class QuestController extends ApiController
             );
 
             return $this->error($errors, Response::HTTP_UNPROCESSABLE_ENTITY);
+        } catch (NotSerializableException $e) {
+            throw new UnprocessableEntityHttpException($this->get('translator')->trans($e->getMessage()));
         }
     }
 

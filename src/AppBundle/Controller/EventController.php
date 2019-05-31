@@ -363,20 +363,16 @@ class EventController extends ApiController
 
         $serializer = $factory->build(Event::class);
 
-        try {
-            // todo @lg this is ugly. should just require once method call!
-            $resource = $serializer->unserializeEmptyResource($input);
-            $serializer->unserializeResource($input, $resource);
-        } catch (NotSerializableException $e) {
-            throw new UnprocessableEntityHttpException($this->get('translator')->trans($e->getMessage()));
-        }
-
         if ($event = Event::getById($request->get('id'))) {
             if ($this->getUser() !== $event->getUser()) {
-                throw new HttpException(Response::HTTP_UNAUTHORIZED, $this->get('translator')->trans('event.errors.delete_unauthorized'));
+                throw new HttpException(Response::HTTP_UNAUTHORIZED, $this->get('translator')->trans('event.errors.update_unauthorized'));
             }
 
             try {
+                // todo @lg this is ugly. should just require once method call!
+                $resource = $serializer->unserializeEmptyResource($input);
+                $serializer->unserializeResource($input, $resource);
+
                 $updateService->update($event, $resource);
 
                 return $this->success($this->factory->build(Event::class)->serializeResource($event));
@@ -391,6 +387,8 @@ class EventController extends ApiController
                 );
 
                 return $this->error($errors, Response::HTTP_UNPROCESSABLE_ENTITY);
+            } catch (NotSerializableException $e) {
+                throw new UnprocessableEntityHttpException($this->get('translator')->trans($e->getMessage()));
             }
         }
 
