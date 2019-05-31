@@ -20,7 +20,7 @@ $this->extend('Layout/email.html.php');
                 <tr>
                     <td style="font-family: sans-serif; font-size: 14px; vertical-align: top; background-color: #3498db; border-radius: 5px; text-align: center;">
                         <a href="<?= $this->url('app_auth_confirmation', [
-                            'activationHash' => $this->getParam('activationHash')
+                            'activationHash' => $this->getParam('activationHash', 'default')
                         ]) ?>" target="_blank" style="display: inline-block; color: #ffffff; background-color: #3498db; border: solid 1px #3498db; border-radius: 5px; box-sizing: border-box; cursor: pointer; text-decoration: none; font-size: 14px; font-weight: bold; margin: 0; padding: 12px 25px; text-transform: capitalize; border-color: #3498db;">
                             E-Mail Adresse bestätigen
                         </a>
