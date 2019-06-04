@@ -103,7 +103,7 @@ class QuestSerializer extends AbstractPimcoreModelSerializer
         $resource->setAttributes([
             'name' => $data['attributes']['name'],
             'description' => $data['attributes']['description'],
-            'public' => $data['attributes']['description'],
+            'public' => $data['attributes']['public'],
             'steps' => $data['attributes']['steps']
         ]);
 
