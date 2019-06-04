@@ -1,15 +1,16 @@
 <?php 
 
 /** 
-* Generated at: 2019-01-29T15:34:40+01:00
+* Generated at: 2019-06-04T12:42:06+02:00
 * Inheritance: no
 * Variants: no
 * Changed by: admin (2)
-* IP: ::1
+* IP: 127.0.0.1
 
 
 Fields Summary: 
 - active [checkbox]
+- public [checkbox]
 - firstname [firstname]
 - lastname [lastname]
 - gender [select]
@@ -25,6 +26,7 @@ Fields Summary:
 - username [input]
 - password [password]
 - emailConfirmed [checkbox]
+- activationHash [input]
 */ 
 
 
@@ -33,13 +35,17 @@ return Pimcore\Model\DataObject\ClassDefinition::__set_state(array(
    'name' => 'User',
    'description' => '',
    'creationDate' => 0,
-   'modificationDate' => 1548772480,
+   'modificationDate' => 1559644926,
    'userOwner' => 2,
    'userModification' => 2,
    'parentClass' => '',
    'listingParentClass' => '',
    'useTraits' => '',
    'listingUseTraits' => '',
+   'encryption' => false,
+   'encryptedTables' => 
+  array (
+  ),
    'allowInherit' => false,
    'allowVariants' => NULL,
    'showVariants' => false,
@@ -136,6 +142,28 @@ return Pimcore\Model\DataObject\ClassDefinition::__set_state(array(
                      'visibleSearch' => false,
                   )),
                   1 => 
+                  Pimcore\Model\DataObject\ClassDefinition\Data\Checkbox::__set_state(array(
+                     'fieldtype' => 'checkbox',
+                     'defaultValue' => 0,
+                     'queryColumnType' => 'tinyint(1)',
+                     'columnType' => 'tinyint(1)',
+                     'phpdocType' => 'boolean',
+                     'name' => 'public',
+                     'title' => 'Öffentliches Profil',
+                     'tooltip' => '',
+                     'mandatory' => false,
+                     'noteditable' => false,
+                     'index' => false,
+                     'locked' => NULL,
+                     'style' => '',
+                     'permissions' => NULL,
+                     'datatype' => 'data',
+                     'relationType' => false,
+                     'invisible' => false,
+                     'visibleGridView' => false,
+                     'visibleSearch' => false,
+                  )),
+                  2 => 
                   Pimcore\Model\DataObject\ClassDefinition\Layout\Fieldset::__set_state(array(
                      'fieldtype' => 'fieldset',
                      'labelWidth' => 180,
@@ -1600,7 +1628,7 @@ return Pimcore\Model\DataObject\ClassDefinition::__set_state(array(
                     ),
                      'locked' => false,
                   )),
-                  2 => 
+                  3 => 
                   Pimcore\Model\DataObject\ClassDefinition\Layout\Fieldset::__set_state(array(
                      'fieldtype' => 'fieldset',
                      'labelWidth' => 180,
@@ -1620,7 +1648,7 @@ return Pimcore\Model\DataObject\ClassDefinition::__set_state(array(
                     ),
                      'locked' => false,
                   )),
-                  3 => 
+                  4 => 
                   Pimcore\Model\DataObject\ClassDefinition\Layout\Fieldset::__set_state(array(
                      'fieldtype' => 'fieldset',
                      'labelWidth' => 180,
@@ -1653,7 +1681,7 @@ return Pimcore\Model\DataObject\ClassDefinition::__set_state(array(
                          'tooltip' => '',
                          'mandatory' => false,
                          'noteditable' => false,
-                         'index' => false,
+                         'index' => true,
                          'locked' => false,
                          'style' => '',
                          'permissions' => NULL,
@@ -1673,7 +1701,7 @@ return Pimcore\Model\DataObject\ClassDefinition::__set_state(array(
                          'phpdocType' => 'string',
                          'regex' => '',
                          'unique' => false,
-                         'showCharCount' => NULL,
+                         'showCharCount' => false,
                          'name' => 'phone',
                          'title' => 'Phone',
                          'tooltip' => '',
@@ -1692,7 +1720,7 @@ return Pimcore\Model\DataObject\ClassDefinition::__set_state(array(
                     ),
                      'locked' => false,
                   )),
-                  4 => 
+                  5 => 
                   Pimcore\Model\DataObject\ClassDefinition\Layout\Fieldset::__set_state(array(
                      'fieldtype' => 'fieldset',
                      'labelWidth' => 100,
@@ -1915,6 +1943,32 @@ return Pimcore\Model\DataObject\ClassDefinition::__set_state(array(
                      'phpdocType' => 'boolean',
                      'name' => 'emailConfirmed',
                      'title' => 'E-Mail bestätigt',
+                     'tooltip' => '',
+                     'mandatory' => false,
+                     'noteditable' => true,
+                     'index' => false,
+                     'locked' => false,
+                     'style' => '',
+                     'permissions' => NULL,
+                     'datatype' => 'data',
+                     'relationType' => false,
+                     'invisible' => false,
+                     'visibleGridView' => false,
+                     'visibleSearch' => false,
+                  )),
+                  3 => 
+                  Pimcore\Model\DataObject\ClassDefinition\Data\Input::__set_state(array(
+                     'fieldtype' => 'input',
+                     'width' => NULL,
+                     'queryColumnType' => 'varchar',
+                     'columnType' => 'varchar',
+                     'columnLength' => 190,
+                     'phpdocType' => 'string',
+                     'regex' => '',
+                     'unique' => false,
+                     'showCharCount' => false,
+                     'name' => 'activationHash',
+                     'title' => 'activationHash',
                      'tooltip' => '',
                      'mandatory' => false,
                      'noteditable' => true,

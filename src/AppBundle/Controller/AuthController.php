@@ -110,6 +110,11 @@ class AuthController extends ApiController
      *          maximum=2
      *       ),
      *       @SWG\Property(
+     *          property="public",
+     *          type="boolean",
+     *          description="is public profile"
+     *       ),
+     *       @SWG\Property(
      *          property="isHost",
      *          type="boolean",
      *          description="Set host status"
@@ -164,7 +169,7 @@ class AuthController extends ApiController
 
             $user->save();
 
-            if ($document = Email::getByPath('/auth/registrationConfirmation')) {
+            if (\Pimcore::inDebugMode() && ($document = Email::getByPath('/auth/registrationConfirmation'))) {
                 $email = new Mail();
                 $email->setDocument($document);
                 $email->setTo($user->getEmail(), "{$user->getFirstname()} {$user->getLastname()}");
