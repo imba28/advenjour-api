@@ -110,7 +110,7 @@ class AuthController extends ApiController
      *          maximum=2
      *       ),
      *       @SWG\Property(
-     *          property="public",
+     *          property="isPublic",
      *          type="boolean",
      *          description="is public profile"
      *       ),

@@ -1,16 +1,15 @@
 <?php 
 
 /** 
-* Generated at: 2019-06-04T12:42:06+02:00
+* Generated at: 2019-06-04T13:09:27+02:00
 * Inheritance: no
 * Variants: no
 * Changed by: admin (2)
-* IP: 127.0.0.1
+* IP: ::1
 
 
 Fields Summary: 
 - active [checkbox]
-- public [checkbox]
 - firstname [firstname]
 - lastname [lastname]
 - gender [select]
@@ -18,6 +17,7 @@ Fields Summary:
 - avatar [image]
 - email [email]
 - phone [input]
+- isPublic [checkbox]
 - isHost [checkbox]
 - hostConfirmed [checkbox]
 - street [input]
@@ -35,7 +35,7 @@ return Pimcore\Model\DataObject\ClassDefinition::__set_state(array(
    'name' => 'User',
    'description' => '',
    'creationDate' => 0,
-   'modificationDate' => 1559644926,
+   'modificationDate' => 1559646567,
    'userOwner' => 2,
    'userModification' => 2,
    'parentClass' => '',
@@ -142,28 +142,6 @@ return Pimcore\Model\DataObject\ClassDefinition::__set_state(array(
                      'visibleSearch' => false,
                   )),
                   1 => 
-                  Pimcore\Model\DataObject\ClassDefinition\Data\Checkbox::__set_state(array(
-                     'fieldtype' => 'checkbox',
-                     'defaultValue' => 0,
-                     'queryColumnType' => 'tinyint(1)',
-                     'columnType' => 'tinyint(1)',
-                     'phpdocType' => 'boolean',
-                     'name' => 'public',
-                     'title' => 'Öffentliches Profil',
-                     'tooltip' => '',
-                     'mandatory' => false,
-                     'noteditable' => false,
-                     'index' => false,
-                     'locked' => NULL,
-                     'style' => '',
-                     'permissions' => NULL,
-                     'datatype' => 'data',
-                     'relationType' => false,
-                     'invisible' => false,
-                     'visibleGridView' => false,
-                     'visibleSearch' => false,
-                  )),
-                  2 => 
                   Pimcore\Model\DataObject\ClassDefinition\Layout\Fieldset::__set_state(array(
                      'fieldtype' => 'fieldset',
                      'labelWidth' => 180,
@@ -1628,7 +1606,7 @@ return Pimcore\Model\DataObject\ClassDefinition::__set_state(array(
                     ),
                      'locked' => false,
                   )),
-                  3 => 
+                  2 => 
                   Pimcore\Model\DataObject\ClassDefinition\Layout\Fieldset::__set_state(array(
                      'fieldtype' => 'fieldset',
                      'labelWidth' => 180,
@@ -1648,7 +1626,7 @@ return Pimcore\Model\DataObject\ClassDefinition::__set_state(array(
                     ),
                      'locked' => false,
                   )),
-                  4 => 
+                  3 => 
                   Pimcore\Model\DataObject\ClassDefinition\Layout\Fieldset::__set_state(array(
                      'fieldtype' => 'fieldset',
                      'labelWidth' => 180,
@@ -1720,7 +1698,7 @@ return Pimcore\Model\DataObject\ClassDefinition::__set_state(array(
                     ),
                      'locked' => false,
                   )),
-                  5 => 
+                  4 => 
                   Pimcore\Model\DataObject\ClassDefinition\Layout\Fieldset::__set_state(array(
                      'fieldtype' => 'fieldset',
                      'labelWidth' => 100,
@@ -1744,6 +1722,28 @@ return Pimcore\Model\DataObject\ClassDefinition::__set_state(array(
                          'queryColumnType' => 'tinyint(1)',
                          'columnType' => 'tinyint(1)',
                          'phpdocType' => 'boolean',
+                         'name' => 'isPublic',
+                         'title' => 'Öffentliches Profil',
+                         'tooltip' => '',
+                         'mandatory' => false,
+                         'noteditable' => false,
+                         'index' => false,
+                         'locked' => false,
+                         'style' => '',
+                         'permissions' => NULL,
+                         'datatype' => 'data',
+                         'relationType' => false,
+                         'invisible' => false,
+                         'visibleGridView' => false,
+                         'visibleSearch' => false,
+                      )),
+                      1 => 
+                      Pimcore\Model\DataObject\ClassDefinition\Data\Checkbox::__set_state(array(
+                         'fieldtype' => 'checkbox',
+                         'defaultValue' => 0,
+                         'queryColumnType' => 'tinyint(1)',
+                         'columnType' => 'tinyint(1)',
+                         'phpdocType' => 'boolean',
                          'name' => 'isHost',
                          'title' => 'Ist Host',
                          'tooltip' => '',
@@ -1759,7 +1759,7 @@ return Pimcore\Model\DataObject\ClassDefinition::__set_state(array(
                          'visibleGridView' => false,
                          'visibleSearch' => false,
                       )),
-                      1 => 
+                      2 => 
                       Pimcore\Model\DataObject\ClassDefinition\Data\Checkbox::__set_state(array(
                          'fieldtype' => 'checkbox',
                          'defaultValue' => 0,
@@ -1781,7 +1781,7 @@ return Pimcore\Model\DataObject\ClassDefinition::__set_state(array(
                          'visibleGridView' => false,
                          'visibleSearch' => false,
                       )),
-                      2 => 
+                      3 => 
                       Pimcore\Model\DataObject\ClassDefinition\Data\Input::__set_state(array(
                          'fieldtype' => 'input',
                          'width' => NULL,
@@ -1807,7 +1807,7 @@ return Pimcore\Model\DataObject\ClassDefinition::__set_state(array(
                          'visibleGridView' => false,
                          'visibleSearch' => false,
                       )),
-                      3 => 
+                      4 => 
                       Pimcore\Model\DataObject\ClassDefinition\Data\Input::__set_state(array(
                          'fieldtype' => 'input',
                          'width' => NULL,
@@ -1833,7 +1833,7 @@ return Pimcore\Model\DataObject\ClassDefinition::__set_state(array(
                          'visibleGridView' => false,
                          'visibleSearch' => false,
                       )),
-                      4 => 
+                      5 => 
                       Pimcore\Model\DataObject\ClassDefinition\Data\Input::__set_state(array(
                          'fieldtype' => 'input',
                          'width' => NULL,

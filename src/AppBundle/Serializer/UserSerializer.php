@@ -24,7 +24,7 @@ class UserSerializer extends AbstractPimcoreModelSerializer
             'username' => $object->getUsername(),
             'email' => $object->getEmail(),
             'isHost' => $object->getIsHost() === true,
-            'public' => $object->getPublic() === true
+            'isPublic' => $object->getIsPublic() === true
         ]);
 
         return $resource;
