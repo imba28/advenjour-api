@@ -78,6 +78,18 @@ class QuestSerializer extends AbstractPimcoreModelSerializer
                     $eventSerializer->serializeResourceArray($object->getEvents())
                 );
             }
+        } else {
+            $resource->addRelationship(
+                'events',
+               []
+            );
+
+            if ($this->includeFullResource('events')) {
+                $resource->addInclude(
+                    'events',
+                   []
+                );
+            }
         }
 
         if (($categories = $object->getCategories()) && count($categories) > 0) {
